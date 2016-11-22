@@ -2,7 +2,7 @@
 <widget xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:vs="http://schemas.microsoft.com/appx/2014/htmlapps" id="io.cordova.myappd93594" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" defaultlocale="en-US">
   <name>Sumatra</name>
   <description>The Phaser game Sumatra with VS Apache Cordova Tools</description>
-  <author href="http://cordova.io" email="dev@cordova.apache.org">Apache Cordova Team</author>
+  <author href="http://bilgin.esme.org" email="besme@esme.org">Bilgin Esme</author>
   <content src="index.html" />
   <access origin="*" />
   <vs:features />
@@ -16,6 +16,7 @@
   <allow-intent href="sms:*" />
   <allow-intent href="mailto:*" />
   <allow-intent href="geo:*" />
+  <icon src="icon.png"/>
   <platform name="android">
     <allow-intent href="market:*" />
   </platform>
