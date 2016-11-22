@@ -30,6 +30,6 @@ module Sumatra {
 
     window.onload = function () {
         Application.initialize();
-        new SimpleGame();
+        new Sumatra.GameEngine();
     }
 }
