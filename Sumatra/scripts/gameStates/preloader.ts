@@ -32,6 +32,7 @@
 
             this.load.image('imgJeep', './assets/images/Jeep.png');
             this.load.image('imgJeepFoo', './assets/images/JeepFoo.png');
+            this.load.image('imgHunterSitting', './assets/images/HunterSitting.png');
             this.load.image('imgCannon', './assets/images/Cannon.png');
             this.load.image('imgFireball', './assets/images/Fireball.png');
             this.load.image('imgBoom', './assets/images/Boom.png');

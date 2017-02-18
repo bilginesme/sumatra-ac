@@ -485,6 +485,7 @@ var Sumatra;
             this.load.image('imgBushes', './assets/images/Bushes.png');
             this.load.image('imgJeep', './assets/images/Jeep.png');
             this.load.image('imgJeepFoo', './assets/images/JeepFoo.png');
+            this.load.image('imgHunterSitting', './assets/images/HunterSitting.png');
             this.load.image('imgCannon', './assets/images/Cannon.png');
             this.load.image('imgFireball', './assets/images/Fireball.png');
             this.load.image('imgBoom', './assets/images/Boom.png');
@@ -913,6 +914,10 @@ var Sumatra;
             this.body.setCircle(20);
             this.body.velocity.x = 0;
             this.scale.x = 1;
+            this.hunter = new Phaser.Sprite(game, 5, -38, "imgHunterSitting", 1);
+            this.hunter.anchor.setTo(0.5, 1);
+            this.addChild(this.hunter);
+            this.children.reverse();
         }
         JeepFoo.prototype.update = function () {
             if (this.phase == PhaseEnum.Moving && Math.abs(this.body.velocity.x) < this.minVelocity) {
