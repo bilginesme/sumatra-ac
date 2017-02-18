@@ -1,7 +1,14 @@
 {
-    "name": "Sumatra",
-    "version": "1.0.0",
-    "private": true,
-    "dependencies": {
-    }
+  "name": "Sumatra",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+  },
+
+  "local-web-server": {
+    "port": 8100
+  },
+  "scripts": {
+    "start": "ws"
+  }
 }
