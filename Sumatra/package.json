@@ -9,6 +9,6 @@
     "port": 8100
   },
   "scripts": {
-    "start": "ws"
+    "start": "ws --spa index.html"
   }
 }
