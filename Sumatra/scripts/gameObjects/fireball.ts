@@ -47,7 +47,7 @@
             var tweenResize = this.game.add.tween(this.scale).to({ x: 1.0, y: 1.0 }, this.timeToGoUp, Phaser.Easing.Linear.None, true);
         }
         private hitOnGround() {
-            this.game.add.audio('soundCannonFall', 1, false).play()
+            this.game.add.audio('soundCannonFall', 0.25, false).play()
             this.isHitOnGround = true;
         }
 

@@ -164,7 +164,7 @@
                 this.cannon.setPosition(this.jeep.getCanonLocation());
         }
 
-        private playTickSound() { this.add.audio('click', 1, false).play() }
+        private playTickSound() { this.add.audio('click', 1, false).play(); }
 
         private decreaseOneLife(): boolean {
             if (this.numLives > 0) {
@@ -223,6 +223,8 @@
             }
         }
         private handleLostOneLife() {
+            this.add.audio('fail', 1, false).play();
+
             for (var i = 0; i < this.fireballs.length; i++)
                 this.fireballs[i].hideMe();
 
@@ -233,10 +235,29 @@
             this.txtLargeMessage.setText("LOST ONE LIFE");
             this.txtLargeMessage.visible = true;
 
-            var tweenText = this.game.add.tween(this.txtLargeMessage.scale).to({ x: 1.1, y: 1.1 }, 1500, Phaser.Easing.Bounce.In, true);
-            tweenText.onComplete.add(function () { this.game.add.tween(this.txtLargeMessage.scale).to({ x: 1, y: 1 }, 3000, Phaser.Easing.Elastic.Out, true); this.gameState = GameStateEnum.Running; this.txtLargeMessage.visible = false; setTimeout(() => this.createRandomJeepFoo(), 2000); }, this);
+            this.jeep.visible = false;
+            this.cannon.visible = false;
 
-            
+            var tweenText = this.game.add.tween(this.txtLargeMessage.scale).to({ x: 1.1, y: 1.1 }, 1500, Phaser.Easing.Bounce.In, true);
+            setTimeout(() => this.restartAfterLostLife(), 5000);
+            tweenText.onComplete.add(function ()
+            {
+                var tweenTextOut = this.game.add.tween(this.txtLargeMessage.scale).to({ x: 1, y: 1 }, 3000, Phaser.Easing.Elastic.Out, true);
+                tweenTextOut.onComplete.add(function ()
+                {
+                   
+                });
+            }, this);
+        }
+
+        private restartAfterLostLife() {
+            alert("ok");
+            this.jeep.visible = true;
+            this.cannon.visible = true;
+                    
+            this.gameState = GameStateEnum.Running;
+            this.txtLargeMessage.visible = false;
+            setTimeout(() => this.createRandomJeepFoo(), 2000);
         }
 
         private checkJeepHit() {

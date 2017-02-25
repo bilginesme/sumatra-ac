@@ -225,6 +225,8 @@ var Sumatra;
             }
         };
         Action.prototype.handleLostOneLife = function () {
+            var _this = this;
+            this.add.audio('fail', 1, false).play();
             for (var i = 0; i < this.fireballs.length; i++)
                 this.fireballs[i].hideMe();
             for (var i = 0; i < this.jeepsFoo.length; i++)
@@ -232,14 +234,24 @@ var Sumatra;
             this.gameState = GameStateEnum.LostOneLife;
             this.txtLargeMessage.setText("LOST ONE LIFE");
             this.txtLargeMessage.visible = true;
+            this.jeep.visible = false;
+            this.cannon.visible = false;
             var tweenText = this.game.add.tween(this.txtLargeMessage.scale).to({ x: 1.1, y: 1.1 }, 1500, Phaser.Easing.Bounce.In, true);
+            setTimeout(function () { return _this.restartAfterLostLife(); }, 5000);
             tweenText.onComplete.add(function () {
-                var _this = this;
-                this.game.add.tween(this.txtLargeMessage.scale).to({ x: 1, y: 1 }, 3000, Phaser.Easing.Elastic.Out, true);
-                this.gameState = GameStateEnum.Running;
-                this.txtLargeMessage.visible = false;
-                setTimeout(function () { return _this.createRandomJeepFoo(); }, 2000);
+                var tweenTextOut = this.game.add.tween(this.txtLargeMessage.scale).to({ x: 1, y: 1 }, 3000, Phaser.Easing.Elastic.Out, true);
+                tweenTextOut.onComplete.add(function () {
+                });
             }, this);
+        };
+        Action.prototype.restartAfterLostLife = function () {
+            var _this = this;
+            alert("ok");
+            this.jeep.visible = true;
+            this.cannon.visible = true;
+            this.gameState = GameStateEnum.Running;
+            this.txtLargeMessage.visible = false;
+            setTimeout(function () { return _this.createRandomJeepFoo(); }, 2000);
         };
         Action.prototype.checkJeepHit = function () {
             var _this = this;
@@ -473,6 +485,8 @@ var Sumatra;
             this.load.audio('click', './assets/sounds/click.ogg', true);
             this.load.audio('soundBazooka', './assets/sounds/bazooka.wav', true);
             this.load.audio('soundCannonFall', './assets/sounds/cannon_fall.wav', true);
+            this.load.audio('fail', './assets/sounds/fail.wav', true);
+            this.load.audio('ohNo', './assets/sounds/oh_no.wav', true);
             this.load.atlasJSONHash('level01-sprites', './assets/sprites/level01-sprites.png', './assets/sprites/level01-sprites.json');
             this.load.atlasJSONHash('FireballSprite', './assets/sprites/FireballSprite.png', './assets/sprites/FireballSprite.json');
             this.load.atlasJSONHash('JeepExplosion', './assets/sprites/JeepExplosion.png', './assets/sprites/JeepExplosion.json');
@@ -726,7 +740,7 @@ var Sumatra;
             var tweenResize = this.game.add.tween(this.scale).to({ x: 1.0, y: 1.0 }, this.timeToGoUp, Phaser.Easing.Linear.None, true);
         };
         Fireball.prototype.hitOnGround = function () {
-            this.game.add.audio('soundCannonFall', 1, false).play();
+            this.game.add.audio('soundCannonFall', 0.25, false).play();
             this.isHitOnGround = true;
         };
         Fireball.prototype.checkHitOnGround = function () {

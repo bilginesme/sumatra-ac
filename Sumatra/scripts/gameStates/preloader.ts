@@ -14,9 +14,12 @@
 
             this.load.image('titlepage', './assets/images/Welcome.png');
             this.load.image('logo', './assets/ui/gameLogo.png');
+
             this.load.audio('click', './assets/sounds/click.ogg', true);
             this.load.audio('soundBazooka', './assets/sounds/bazooka.wav', true);
             this.load.audio('soundCannonFall', './assets/sounds/cannon_fall.wav', true);
+            this.load.audio('fail', './assets/sounds/fail.wav', true);
+            this.load.audio('ohNo', './assets/sounds/oh_no.wav', true);
 
             this.load.atlasJSONHash('level01-sprites', './assets/sprites/level01-sprites.png', './assets/sprites/level01-sprites.json');
             this.load.atlasJSONHash('FireballSprite', './assets/sprites/FireballSprite.png', './assets/sprites/FireballSprite.json');
