@@ -246,7 +246,7 @@ var Sumatra;
         };
         Action.prototype.restartAfterLostLife = function () {
             var _this = this;
-            alert("ok");
+            //alert("ok");
             this.jeep.visible = true;
             this.cannon.visible = true;
             this.gameState = GameStateEnum.Running;
@@ -500,6 +500,7 @@ var Sumatra;
             this.load.image('imgJeep', './assets/images/Jeep.png');
             this.load.image('imgJeepFoo', './assets/images/JeepFoo.png');
             this.load.image('imgHunterSitting', './assets/images/HunterSitting.png');
+            this.load.image('imgHunterStanding', './assets/images/HunterStanding.png');
             this.load.image('imgCannon', './assets/images/Cannon.png');
             this.load.image('imgFireball', './assets/images/Fireball.png');
             this.load.image('imgBoom', './assets/images/Boom.png');
@@ -928,9 +929,12 @@ var Sumatra;
             this.body.setCircle(20);
             this.body.velocity.x = 0;
             this.scale.x = 1;
-            this.hunter = new Phaser.Sprite(game, 5, -38, "imgHunterSitting", 1);
-            this.hunter.anchor.setTo(0.5, 1);
-            this.addChild(this.hunter);
+            this.hunterSitting = new Phaser.Sprite(game, 5, -38, "imgHunterSitting", 1);
+            this.hunterSitting.anchor.setTo(0.5, 1);
+            this.hunterStanding = new Phaser.Sprite(game, 9, -41, "imgHunterStanding", 1);
+            this.hunterStanding.anchor.setTo(0.5, 1);
+            this.addChild(this.hunterSitting);
+            this.addChild(this.hunterStanding);
             this.children.reverse();
         }
         JeepFoo.prototype.update = function () {
@@ -960,6 +964,8 @@ var Sumatra;
             this.visible = true;
             this.phase = PhaseEnum.Moving;
             this.vicinityToRhino = 200 + 100 * Math.random();
+            this.hunterSitting.visible = true;
+            this.hunterStanding.visible = false;
         };
         JeepFoo.prototype.hideMe = function () {
             this.x = this.game.width;
@@ -975,6 +981,8 @@ var Sumatra;
             this.phase = PhaseEnum.Stopping;
             setTimeout(function () { return _this.shoot(); }, 5000);
             rhino.stop();
+            this.hunterSitting.visible = false;
+            this.hunterStanding.visible = true;
         };
         JeepFoo.prototype.shoot = function () {
             if (this.phase == PhaseEnum.Stopping)

@@ -251,7 +251,7 @@
         }
 
         private restartAfterLostLife() {
-            alert("ok");
+            //alert("ok");
             this.jeep.visible = true;
             this.cannon.visible = true;
                     

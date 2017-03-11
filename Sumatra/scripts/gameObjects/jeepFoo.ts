@@ -5,7 +5,8 @@
         private phase: PhaseEnum;
         private minVelocity: number = 50;
         vicinityToRhino: number;
-        private hunter: Phaser.Sprite;
+        private hunterSitting: Phaser.Sprite;
+        private hunterStanding: Phaser.Sprite;
 
         constructor(game: Phaser.Game) {
             super(game, 0, 0, 'imgJeepFoo');
@@ -22,10 +23,14 @@
             this.body.velocity.x = 0;
             this.scale.x = 1;
 
-            this.hunter = new Phaser.Sprite(game, 5, -38, "imgHunterSitting", 1);
-            this.hunter.anchor.setTo(0.5, 1);
+            this.hunterSitting = new Phaser.Sprite(game, 5, -38, "imgHunterSitting", 1);
+            this.hunterSitting.anchor.setTo(0.5, 1);
+            this.hunterStanding = new Phaser.Sprite(game, 9, -41, "imgHunterStanding", 1);
+            this.hunterStanding.anchor.setTo(0.5, 1);
 
-            this.addChild(this.hunter);
+            this.addChild(this.hunterSitting);
+            this.addChild(this.hunterStanding);
+
             this.children.reverse();
         }
 
@@ -61,6 +66,9 @@
            
             this.phase = PhaseEnum.Moving;
             this.vicinityToRhino = 200 + 100 * Math.random();
+
+            this.hunterSitting.visible = true;
+            this.hunterStanding.visible = false;
         }
 
         hideMe() {
@@ -77,6 +85,8 @@
             this.phase = PhaseEnum.Stopping;
             setTimeout(() => this.shoot(), 5000);
             rhino.stop();
+            this.hunterSitting.visible = false;
+            this.hunterStanding.visible = true;
         }
 
         private shoot() {
