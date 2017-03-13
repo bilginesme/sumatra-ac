@@ -40,6 +40,7 @@
             this.load.image('imgCannon', './assets/images/Cannon.png');
             this.load.image('imgFireball', './assets/images/Fireball.png');
             this.load.image('imgBoom', './assets/images/Boom.png');
+            this.load.image('imgBoomWithCannon', './assets/images/BoomWithCannon.png');
             this.load.image('imgBang', './assets/images/Bang.png');
             this.load.image('imgExplosion', './assets/images/ExplosionWithBoom.png');
 

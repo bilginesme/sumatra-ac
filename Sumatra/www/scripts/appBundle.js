@@ -103,9 +103,9 @@ var Sumatra;
             this.jeepExplosion = this.add.sprite(0, 0, 'imgExplosion');
             this.jeepExplosion.anchor.setTo(0.5);
             this.jeepExplosion.visible = false;
-            this.bang = this.add.sprite(0, 0, 'imgBang');
-            this.bang.anchor.setTo(0.5);
-            this.bang.visible = false;
+            this.boomWithCannon = this.add.sprite(0, 0, 'imgBoomWithCannon');
+            this.boomWithCannon.anchor.setTo(0.5);
+            this.boomWithCannon.visible = false;
             this.fireballs = new Array(Sumatra.Fireball.maxFireballs);
             for (var i = 0; i < this.fireballs.length; i++) {
                 this.fireballs[i] = new Sumatra.Fireball(this.game, this.volcano.getFireballLocation().x, this.volcano.getFireballLocation().y);
@@ -164,7 +164,7 @@ var Sumatra;
                 if (this.gameState == GameStateEnum.Running && this.jeep.isInArea(this.game.input.x, this.game.input.y)) {
                     this.jeep.tickleMe(this.game.input.x, this.game.input.y);
                     if (this.cannon.startFiring())
-                        this.createBang(this.jeep.getCanonLocation().x, this.jeep.getCanonLocation().y);
+                        this.createBoomWithCannon(this.jeep.getCanonLocation().x, this.jeep.getCanonLocation().y);
                 }
                 if (this.volcano.tickleMe(this.game.input.x, this.game.input.y))
                     this.playTickSound();
@@ -327,14 +327,14 @@ var Sumatra;
             var tweenAlpha = this.game.add.tween(this.jeepExplosion).to({ alpha: 1 }, 200, Phaser.Easing.Linear.None, true);
             tweenAlpha.onComplete.add(function () { this.game.add.tween(this.jeepExplosion).to({ alpha: 0 }, 1500, Phaser.Easing.Linear.None, true); }, this);
         };
-        Action.prototype.createBang = function (x, y) {
-            this.bang.position.set(x, y);
-            this.bang.visible = true;
-            this.bang.alpha = 0;
-            var tween = this.game.add.tween(this.bang.scale).to({ x: 1.25, y: 1.25 }, 200, Phaser.Easing.Bounce.In, true);
-            tween.onComplete.add(function () { this.game.add.tween(this.bang.scale).to({ x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true); }, this);
-            var tweenAlpha = this.game.add.tween(this.bang).to({ alpha: 1 }, 200, Phaser.Easing.Linear.None, true);
-            tweenAlpha.onComplete.add(function () { this.game.add.tween(this.bang).to({ alpha: 0 }, 1500, Phaser.Easing.Linear.None, true); }, this);
+        Action.prototype.createBoomWithCannon = function (x, y) {
+            this.boomWithCannon.position.set(x, y);
+            this.boomWithCannon.visible = true;
+            this.boomWithCannon.alpha = 0;
+            var tween = this.game.add.tween(this.boomWithCannon.scale).to({ x: 1.25, y: 1.25 }, 200, Phaser.Easing.Bounce.In, true);
+            tween.onComplete.add(function () { this.game.add.tween(this.boomWithCannon.scale).to({ x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true); }, this);
+            var tweenAlpha = this.game.add.tween(this.boomWithCannon).to({ alpha: 1 }, 200, Phaser.Easing.Linear.None, true);
+            tweenAlpha.onComplete.add(function () { this.game.add.tween(this.boomWithCannon).to({ alpha: 0 }, 1500, Phaser.Easing.Linear.None, true); }, this);
         };
         Action.prototype.createExplosion = function (x, y) {
             this.explosion.position.set(x, y);
@@ -504,6 +504,7 @@ var Sumatra;
             this.load.image('imgCannon', './assets/images/Cannon.png');
             this.load.image('imgFireball', './assets/images/Fireball.png');
             this.load.image('imgBoom', './assets/images/Boom.png');
+            this.load.image('imgBoomWithCannon', './assets/images/BoomWithCannon.png');
             this.load.image('imgBang', './assets/images/Bang.png');
             this.load.image('imgExplosion', './assets/images/ExplosionWithBoom.png');
             this.load.image('imgCloudSmall', './assets/images/CloudSmall.png');
@@ -933,8 +934,12 @@ var Sumatra;
             this.hunterSitting.anchor.setTo(0.5, 1);
             this.hunterStanding = new Phaser.Sprite(game, 9, -41, "imgHunterStanding", 1);
             this.hunterStanding.anchor.setTo(0.5, 1);
+            this.bang = new Phaser.Sprite(game, 0, 0, "imgBang", 1);
+            this.bang.anchor.setTo(0.5);
+            this.bang.visible = true;
             this.addChild(this.hunterSitting);
             this.addChild(this.hunterStanding);
+            this.addChild(this.bang);
             this.children.reverse();
         }
         JeepFoo.prototype.update = function () {
@@ -983,10 +988,21 @@ var Sumatra;
             rhino.stop();
             this.hunterSitting.visible = false;
             this.hunterStanding.visible = true;
+            this.createBang(this.x, this.y);
         };
         JeepFoo.prototype.shoot = function () {
-            if (this.phase == PhaseEnum.Stopping)
+            if (this.phase == PhaseEnum.Stopping) {
                 this.phase = PhaseEnum.Shooting;
+            }
+        };
+        JeepFoo.prototype.createBang = function (x, y) {
+            this.bang.position.set(x, y);
+            this.bang.visible = true;
+            this.bang.alpha = 0;
+            var tween = this.game.add.tween(this.bang.scale).to({ x: 1.25, y: 1.25 }, 200, Phaser.Easing.Bounce.In, true);
+            tween.onComplete.add(function () { this.game.add.tween(this.bang.scale).to({ x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true); }, this);
+            var tweenAlpha = this.game.add.tween(this.bang).to({ alpha: 1 }, 200, Phaser.Easing.Linear.None, true);
+            tweenAlpha.onComplete.add(function () { this.game.add.tween(this.bang).to({ alpha: 0 }, 1500, Phaser.Easing.Linear.None, true); }, this);
         };
         JeepFoo.prototype.isMoving = function () { return this.phase == PhaseEnum.Moving; };
         JeepFoo.prototype.isShooting = function () { return this.phase == PhaseEnum.Shooting; };

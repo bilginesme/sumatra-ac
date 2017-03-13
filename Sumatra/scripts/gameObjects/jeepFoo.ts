@@ -7,6 +7,7 @@
         vicinityToRhino: number;
         private hunterSitting: Phaser.Sprite;
         private hunterStanding: Phaser.Sprite;
+        private bang: Phaser.Sprite;
 
         constructor(game: Phaser.Game) {
             super(game, 0, 0, 'imgJeepFoo');
@@ -28,8 +29,13 @@
             this.hunterStanding = new Phaser.Sprite(game, 9, -41, "imgHunterStanding", 1);
             this.hunterStanding.anchor.setTo(0.5, 1);
 
+            this.bang = new Phaser.Sprite(game, 0, 0, "imgBang", 1);
+            this.bang.anchor.setTo(0.5);
+            this.bang.visible = true;
+
             this.addChild(this.hunterSitting);
             this.addChild(this.hunterStanding);
+            this.addChild(this.bang);
 
             this.children.reverse();
         }
@@ -87,11 +93,28 @@
             rhino.stop();
             this.hunterSitting.visible = false;
             this.hunterStanding.visible = true;
+            this.createBang(this.x, this.y);
         }
 
         private shoot() {
-            if (this.phase == PhaseEnum.Stopping)
+            if (this.phase == PhaseEnum.Stopping) {
+                
                 this.phase = PhaseEnum.Shooting;
+            }
+                
+        }
+
+        private createBang(x, y) {
+            this.bang.position.set(x, y);
+            this.bang.visible = true;
+            this.bang.alpha = 0;
+            //this.bang.scale.x = this.scale.x;
+
+            var tween = this.game.add.tween(this.bang.scale).to({ x: 1.25, y: 1.25 }, 200, Phaser.Easing.Bounce.In, true);
+            tween.onComplete.add(function () { this.game.add.tween(this.bang.scale).to({ x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true); }, this);
+
+            var tweenAlpha = this.game.add.tween(this.bang).to({ alpha: 1 }, 200, Phaser.Easing.Linear.None, true);
+            tweenAlpha.onComplete.add(function () { this.game.add.tween(this.bang).to({ alpha: 0 }, 1500, Phaser.Easing.Linear.None, true); }, this);
         }
 
         isMoving() { return this.phase == PhaseEnum.Moving; }
