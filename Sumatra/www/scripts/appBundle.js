@@ -152,7 +152,7 @@ var Sumatra;
             this.handleJeepMovement();
             this.checkJeepHit();
             this.checkJeepRhinoVicinity();
-            this.checkRhinoShooting();
+            this.checkWhetherRhinoShot();
             this.checkFireballHit();
             this.statusText2.setText("Fireball Duration : " + Sumatra.Fireball.durationForNewFireball);
         };
@@ -282,9 +282,9 @@ var Sumatra;
                 }
             }
         };
-        Action.prototype.checkRhinoShooting = function () {
+        Action.prototype.checkWhetherRhinoShot = function () {
             for (var i = 0; i < this.jeepsFoo.length; i++) {
-                if (this.jeepsFoo[i].visible == true && this.jeepsFoo[i].isShooting() && this.rhino.visible == true) {
+                if (this.jeepsFoo[i].visible == true && this.jeepsFoo[i].isRhinoShot() && this.rhino.visible == true) {
                     this.jeepsFoo[i].hideMe();
                     if (this.rhino.isStoppingNow())
                         this.rhino.restart();
@@ -934,9 +934,9 @@ var Sumatra;
             this.hunterSitting.anchor.setTo(0.5, 1);
             this.hunterStanding = new Phaser.Sprite(game, 9, -41, "imgHunterStanding", 1);
             this.hunterStanding.anchor.setTo(0.5, 1);
-            this.bang = new Phaser.Sprite(game, 0, 0, "imgBang", 1);
+            this.bang = new Phaser.Sprite(game, 30, -60, "imgBang", 1);
             this.bang.anchor.setTo(0.5);
-            this.bang.visible = true;
+            this.bang.visible = false;
             this.addChild(this.hunterSitting);
             this.addChild(this.hunterStanding);
             this.addChild(this.bang);
@@ -963,6 +963,7 @@ var Sumatra;
                 this.body.acceleration.x = -acceleration;
                 this.scale.x = 1;
             }
+            this.bang.scale.x = this.scale.x;
             if (rhino.scale.x * this.scale.x > 0)
                 rhino.turnAroundAndMove();
             this.y = 450;
@@ -978,6 +979,8 @@ var Sumatra;
             this.body.velocity.x = 0;
             this.body.acceleration.x = 0;
             this.phase = PhaseEnum.Hidden;
+            this.bang.visible = false;
+            this.bang.alpha = 1;
         };
         JeepFoo.prototype.stopToPrepareShooting = function (rhino) {
             var _this = this;
@@ -988,24 +991,31 @@ var Sumatra;
             rhino.stop();
             this.hunterSitting.visible = false;
             this.hunterStanding.visible = true;
-            this.createBang(this.x, this.y);
         };
         JeepFoo.prototype.shoot = function () {
+            var _this = this;
             if (this.phase == PhaseEnum.Stopping) {
+                this.createBang();
                 this.phase = PhaseEnum.Shooting;
+                setTimeout(function () { return _this.shotComplete(); }, 1000);
             }
         };
-        JeepFoo.prototype.createBang = function (x, y) {
-            this.bang.position.set(x, y);
+        JeepFoo.prototype.shotComplete = function () {
+            if (this.phase == PhaseEnum.Shooting) {
+                this.phase = PhaseEnum.ShotComplete;
+            }
+        };
+        JeepFoo.prototype.createBang = function () {
             this.bang.visible = true;
             this.bang.alpha = 0;
-            var tween = this.game.add.tween(this.bang.scale).to({ x: 1.25, y: 1.25 }, 200, Phaser.Easing.Bounce.In, true);
-            tween.onComplete.add(function () { this.game.add.tween(this.bang.scale).to({ x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true); }, this);
+            var factor = this.bang.scale.x;
+            var tween = this.game.add.tween(this.bang.scale).to({ x: factor * 1.25, y: 1.25 }, 200, Phaser.Easing.Bounce.In, true);
+            tween.onComplete.add(function () { this.game.add.tween(this.bang.scale).to({ x: factor, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true); }, this);
             var tweenAlpha = this.game.add.tween(this.bang).to({ alpha: 1 }, 200, Phaser.Easing.Linear.None, true);
             tweenAlpha.onComplete.add(function () { this.game.add.tween(this.bang).to({ alpha: 0 }, 1500, Phaser.Easing.Linear.None, true); }, this);
         };
         JeepFoo.prototype.isMoving = function () { return this.phase == PhaseEnum.Moving; };
-        JeepFoo.prototype.isShooting = function () { return this.phase == PhaseEnum.Shooting; };
+        JeepFoo.prototype.isRhinoShot = function () { return this.phase == PhaseEnum.ShotComplete; };
         return JeepFoo;
     }(Phaser.Sprite));
     Sumatra.JeepFoo = JeepFoo;

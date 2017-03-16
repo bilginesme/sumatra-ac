@@ -29,9 +29,9 @@
             this.hunterStanding = new Phaser.Sprite(game, 9, -41, "imgHunterStanding", 1);
             this.hunterStanding.anchor.setTo(0.5, 1);
 
-            this.bang = new Phaser.Sprite(game, 0, 0, "imgBang", 1);
+            this.bang = new Phaser.Sprite(game, 30, -60, "imgBang", 1);
             this.bang.anchor.setTo(0.5);
-            this.bang.visible = true;
+            this.bang.visible = false;
 
             this.addChild(this.hunterSitting);
             this.addChild(this.hunterStanding);
@@ -65,6 +65,8 @@
                 this.scale.x = 1;
             }
 
+            this.bang.scale.x = this.scale.x;
+
             if (rhino.scale.x * this.scale.x > 0)
                 rhino.turnAroundAndMove();
             this.y = 450;
@@ -83,6 +85,9 @@
             this.body.velocity.x = 0;
             this.body.acceleration.x = 0;
             this.phase = PhaseEnum.Hidden;
+
+            this.bang.visible = false;
+            this.bang.alpha = 1;
         }
 
         stopToPrepareShooting(rhino: Rhino) {
@@ -93,32 +98,37 @@
             rhino.stop();
             this.hunterSitting.visible = false;
             this.hunterStanding.visible = true;
-            this.createBang(this.x, this.y);
+            
         }
 
         private shoot() {
             if (this.phase == PhaseEnum.Stopping) {
-                
+                this.createBang();
                 this.phase = PhaseEnum.Shooting;
+                setTimeout(() => this.shotComplete(), 1000);
             }
-                
         }
 
-        private createBang(x, y) {
-            this.bang.position.set(x, y);
-            this.bang.visible = true;
-            this.bang.alpha = 0;
-            //this.bang.scale.x = this.scale.x;
+        private shotComplete() {
+            if (this.phase == PhaseEnum.Shooting) {
+                this.phase = PhaseEnum.ShotComplete;
+            }
+        }
 
-            var tween = this.game.add.tween(this.bang.scale).to({ x: 1.25, y: 1.25 }, 200, Phaser.Easing.Bounce.In, true);
-            tween.onComplete.add(function () { this.game.add.tween(this.bang.scale).to({ x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true); }, this);
+        private createBang() {
+            this.bang.visible = true;
+            this.bang.alpha = 0; 
+            var factor = this.bang.scale.x;
+            
+            var tween = this.game.add.tween(this.bang.scale).to({ x: factor * 1.25, y: 1.25 }, 200, Phaser.Easing.Bounce.In, true);
+            tween.onComplete.add(function () { this.game.add.tween(this.bang.scale).to({ x: factor, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true); }, this);
 
             var tweenAlpha = this.game.add.tween(this.bang).to({ alpha: 1 }, 200, Phaser.Easing.Linear.None, true);
             tweenAlpha.onComplete.add(function () { this.game.add.tween(this.bang).to({ alpha: 0 }, 1500, Phaser.Easing.Linear.None, true); }, this);
         }
 
         isMoving() { return this.phase == PhaseEnum.Moving; }
-        isShooting() { return this.phase == PhaseEnum.Shooting; }
+        isRhinoShot() { return this.phase == PhaseEnum.ShotComplete; }
     }
 
 }

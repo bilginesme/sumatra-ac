@@ -137,7 +137,7 @@
 
             this.checkJeepHit();
             this.checkJeepRhinoVicinity();
-            this.checkRhinoShooting();
+            this.checkWhetherRhinoShot();
             this.checkFireballHit();
 
             this.statusText2.setText("Fireball Duration : " + Fireball.durationForNewFireball);
@@ -292,9 +292,9 @@
                 }
             }
         }
-        private checkRhinoShooting() {
+        private checkWhetherRhinoShot() {
             for (var i = 0; i < this.jeepsFoo.length; i++) {
-                if (this.jeepsFoo[i].visible == true && this.jeepsFoo[i].isShooting() && this.rhino.visible == true) {
+                if (this.jeepsFoo[i].visible == true && this.jeepsFoo[i].isRhinoShot() && this.rhino.visible == true) {
                     this.jeepsFoo[i].hideMe();
                     if (this.rhino.isStoppingNow())
                         this.rhino.restart();
