@@ -133,6 +133,7 @@ var Sumatra;
             setTimeout(function () { return _this.createRandomJeepFoo(); }, 1000);
             setTimeout(function () { return _this.rhino.giveLife(); }, 1000);
             setTimeout(function () { return _this.createRandomFireball(); }, 5000);
+            this.game.add.audio('intro', 0.25, false).play();
         };
         Action.prototype.update = function () {
             if (this.game.input.activePointer.isDown) {
@@ -483,10 +484,13 @@ var Sumatra;
             this.load.image('titlepage', './assets/images/Welcome.png');
             this.load.image('logo', './assets/ui/gameLogo.png');
             this.load.audio('click', './assets/sounds/click.ogg', true);
+            this.load.audio('intro', './assets/sounds/intro.wav', true);
             this.load.audio('soundBazooka', './assets/sounds/bazooka.wav', true);
             this.load.audio('soundCannonFall', './assets/sounds/cannon_fall.wav', true);
             this.load.audio('fail', './assets/sounds/fail.wav', true);
             this.load.audio('ohNo', './assets/sounds/oh_no.wav', true);
+            this.load.audio('gunShot', './assets/sounds/gun_shot.wav', true);
+            this.load.audio('gunLoad', './assets/sounds/gun-load.wav', true);
             this.load.atlasJSONHash('level01-sprites', './assets/sprites/level01-sprites.png', './assets/sprites/level01-sprites.json');
             this.load.atlasJSONHash('FireballSprite', './assets/sprites/FireballSprite.png', './assets/sprites/FireballSprite.json');
             this.load.atlasJSONHash('JeepExplosion', './assets/sprites/JeepExplosion.png', './assets/sprites/JeepExplosion.json');
@@ -941,6 +945,8 @@ var Sumatra;
             this.addChild(this.hunterStanding);
             this.addChild(this.bang);
             this.children.reverse();
+            this.soundGunShot = this.game.add.audio('gunShot', 1, false);
+            this.soundGunLoad = this.game.add.audio('gunLoad', 1, false);
         }
         JeepFoo.prototype.update = function () {
             if (this.phase == PhaseEnum.Moving && Math.abs(this.body.velocity.x) < this.minVelocity) {
@@ -987,14 +993,16 @@ var Sumatra;
             this.body.velocity.x = 0;
             this.body.acceleration.x = 0;
             this.phase = PhaseEnum.Stopping;
-            setTimeout(function () { return _this.shoot(); }, 5000);
+            setTimeout(function () { return _this.shoot(); }, 4000);
             rhino.stop();
             this.hunterSitting.visible = false;
             this.hunterStanding.visible = true;
+            this.soundGunLoad.play();
         };
         JeepFoo.prototype.shoot = function () {
             var _this = this;
             if (this.phase == PhaseEnum.Stopping) {
+                this.soundGunShot.play();
                 this.createBang();
                 this.phase = PhaseEnum.Shooting;
                 setTimeout(function () { return _this.shotComplete(); }, 1000);

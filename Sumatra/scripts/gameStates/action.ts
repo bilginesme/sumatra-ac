@@ -113,6 +113,8 @@
             setTimeout(() => this.createRandomJeepFoo(), 1000);
             setTimeout(() => this.rhino.giveLife(), 1000);
             setTimeout(() => this.createRandomFireball(), 5000);
+
+            this.game.add.audio('intro', 0.25, false).play()
         }
 
         update() {

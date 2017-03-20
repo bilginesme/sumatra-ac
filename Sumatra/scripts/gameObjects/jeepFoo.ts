@@ -8,6 +8,8 @@
         private hunterSitting: Phaser.Sprite;
         private hunterStanding: Phaser.Sprite;
         private bang: Phaser.Sprite;
+        private soundGunShot: Phaser.Sound;
+        private soundGunLoad: Phaser.Sound;
 
         constructor(game: Phaser.Game) {
             super(game, 0, 0, 'imgJeepFoo');
@@ -38,6 +40,9 @@
             this.addChild(this.bang);
 
             this.children.reverse();
+
+            this.soundGunShot = this.game.add.audio('gunShot', 1, false);
+            this.soundGunLoad = this.game.add.audio('gunLoad', 1, false);
         }
 
         update() {
@@ -94,15 +99,17 @@
             this.body.velocity.x = 0;
             this.body.acceleration.x = 0;
             this.phase = PhaseEnum.Stopping;
-            setTimeout(() => this.shoot(), 5000);
+            setTimeout(() => this.shoot(), 4000);
             rhino.stop();
             this.hunterSitting.visible = false;
             this.hunterStanding.visible = true;
-            
+
+            this.soundGunLoad.play();
         }
 
         private shoot() {
             if (this.phase == PhaseEnum.Stopping) {
+                this.soundGunShot.play();
                 this.createBang();
                 this.phase = PhaseEnum.Shooting;
                 setTimeout(() => this.shotComplete(), 1000);

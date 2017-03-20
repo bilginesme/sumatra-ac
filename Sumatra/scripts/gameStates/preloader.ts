@@ -16,10 +16,13 @@
             this.load.image('logo', './assets/ui/gameLogo.png');
 
             this.load.audio('click', './assets/sounds/click.ogg', true);
+            this.load.audio('intro', './assets/sounds/intro.wav', true);
             this.load.audio('soundBazooka', './assets/sounds/bazooka.wav', true);
             this.load.audio('soundCannonFall', './assets/sounds/cannon_fall.wav', true);
             this.load.audio('fail', './assets/sounds/fail.wav', true);
             this.load.audio('ohNo', './assets/sounds/oh_no.wav', true);
+            this.load.audio('gunShot', './assets/sounds/gun_shot.wav', true);
+            this.load.audio('gunLoad', './assets/sounds/gun-load.wav', true);
 
             this.load.atlasJSONHash('level01-sprites', './assets/sprites/level01-sprites.png', './assets/sprites/level01-sprites.json');
             this.load.atlasJSONHash('FireballSprite', './assets/sprites/FireballSprite.png', './assets/sprites/FireballSprite.json');
