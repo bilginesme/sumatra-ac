@@ -99,7 +99,7 @@
             this.body.velocity.x = 0;
             this.body.acceleration.x = 0;
             this.phase = PhaseEnum.Stopping;
-            setTimeout(() => this.shoot(), 4000);
+            setTimeout(() => this.shoot(rhino), 4000);
             rhino.stop();
             this.hunterSitting.visible = false;
             this.hunterStanding.visible = true;
@@ -107,11 +107,12 @@
             this.soundGunLoad.play();
         }
 
-        private shoot() {
+        private shoot(rhino: Rhino) {
             if (this.phase == PhaseEnum.Stopping) {
                 this.soundGunShot.play();
                 this.createBang();
                 this.phase = PhaseEnum.Shooting;
+                rhino.getKilled();
                 setTimeout(() => this.shotComplete(), 1000);
             }
         }

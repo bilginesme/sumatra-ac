@@ -1,6 +1,5 @@
 ﻿module Sumatra {
-    enum MovingToLeftOrRightEnum { NA, Left, Stopping, Right }
-    
+    enum MovingToLeftOrRightEnum { NA, Left, Stopping, Dead, Right }
 
     export class Rhino extends Phaser.Sprite {
         private statusText: Phaser.Text;
@@ -11,8 +10,9 @@
 
         constructor(game: Phaser.Game, posInit: Phaser.Point) {
             super(game, posInit.x, posInit.y, 'RhinoSpriteSheet', 1);
-            this.animations.add('rhinoWalking', [5, 6, 7], 4, true);
-            this.animations.add('rhinoStopping', [1, 2, 3, 4], 4, true);
+            this.animations.add('rhinoWalking', [4, 5, 6], 4, true);
+            this.animations.add('rhinoStopping', [0, 1, 2, 3], 4, true);
+            this.animations.add('rhinoDead', [7], 1, true);
             game.add.existing(this);
             this.anchor.set(0.5, 1);
 
@@ -24,7 +24,6 @@
             this.body.collideWorldBounds = false;
             this.body.setCircle(20);
             this.body.velocity.x = 0;
-          
 
             this.statusText = this.game.add.text(5, this.game.world.height / 2, "Rhino", { font: "12px Arial", fill: "#FFFFFF", align: "center" });
             this.statusText.anchor.setTo(0, 0.5);
@@ -47,6 +46,7 @@
         }
          
         isStoppingNow(): boolean { return this.movingToLeftOrRight == MovingToLeftOrRightEnum.Stopping; }
+        
 
         giveLife(): void {
             if (!this.visible) {
@@ -84,6 +84,14 @@
             this.animations.play('rhinoWalking');
         }
 
+        getKilled(): void {
+            this.movingToLeftOrRight = MovingToLeftOrRightEnum.Dead;
+            this.body.velocity.x = 0;
+            this.animations.stop('rhinoWalking');
+            this.animations.stop('rhinoStopping');
+            this.animations.play('rhinoDead');
+        }
+
         turnAroundAndMove(): void {
             if (this.scale.x > 0) {
                 this.scale.x = -1;
@@ -96,6 +104,5 @@
 
             this.body.velocity.x = this.scale.x * this.normVelocity;
         }
-
     }
 }

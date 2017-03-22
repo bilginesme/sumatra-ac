@@ -259,6 +259,7 @@
                     
             this.gameState = GameStateEnum.Running;
             this.txtLargeMessage.visible = false;
+            this.rhino.restart();
             setTimeout(() => this.createRandomJeepFoo(), 2000);
         }
 

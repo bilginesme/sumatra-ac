@@ -252,6 +252,7 @@ var Sumatra;
             this.cannon.visible = true;
             this.gameState = GameStateEnum.Running;
             this.txtLargeMessage.visible = false;
+            this.rhino.restart();
             setTimeout(function () { return _this.createRandomJeepFoo(); }, 2000);
         };
         Action.prototype.checkJeepHit = function () {
@@ -511,6 +512,7 @@ var Sumatra;
             this.load.image('imgBoomWithCannon', './assets/images/BoomWithCannon.png');
             this.load.image('imgBang', './assets/images/Bang.png');
             this.load.image('imgExplosion', './assets/images/ExplosionWithBoom.png');
+            this.load.image('imgRhinoDead', './assets/images/RhinoDead.png');
             this.load.image('imgCloudSmall', './assets/images/CloudSmall.png');
             this.load.image('imgCloudLarge', './assets/images/CloudLarge.png');
             this.load.image('imgVolcanoCrest', './assets/images/VolcanoCrest.png');
@@ -993,18 +995,19 @@ var Sumatra;
             this.body.velocity.x = 0;
             this.body.acceleration.x = 0;
             this.phase = PhaseEnum.Stopping;
-            setTimeout(function () { return _this.shoot(); }, 4000);
+            setTimeout(function () { return _this.shoot(rhino); }, 4000);
             rhino.stop();
             this.hunterSitting.visible = false;
             this.hunterStanding.visible = true;
             this.soundGunLoad.play();
         };
-        JeepFoo.prototype.shoot = function () {
+        JeepFoo.prototype.shoot = function (rhino) {
             var _this = this;
             if (this.phase == PhaseEnum.Stopping) {
                 this.soundGunShot.play();
                 this.createBang();
                 this.phase = PhaseEnum.Shooting;
+                rhino.getKilled();
                 setTimeout(function () { return _this.shotComplete(); }, 1000);
             }
         };
@@ -1075,7 +1078,8 @@ var Sumatra;
         MovingToLeftOrRightEnum[MovingToLeftOrRightEnum["NA"] = 0] = "NA";
         MovingToLeftOrRightEnum[MovingToLeftOrRightEnum["Left"] = 1] = "Left";
         MovingToLeftOrRightEnum[MovingToLeftOrRightEnum["Stopping"] = 2] = "Stopping";
-        MovingToLeftOrRightEnum[MovingToLeftOrRightEnum["Right"] = 3] = "Right";
+        MovingToLeftOrRightEnum[MovingToLeftOrRightEnum["Dead"] = 3] = "Dead";
+        MovingToLeftOrRightEnum[MovingToLeftOrRightEnum["Right"] = 4] = "Right";
     })(MovingToLeftOrRightEnum || (MovingToLeftOrRightEnum = {}));
     var Rhino = (function (_super) {
         __extends(Rhino, _super);
@@ -1083,8 +1087,9 @@ var Sumatra;
             _super.call(this, game, posInit.x, posInit.y, 'RhinoSpriteSheet', 1);
             this.normDurationForStopping = 2000;
             this.normVelocity = 50;
-            this.animations.add('rhinoWalking', [5, 6, 7], 4, true);
-            this.animations.add('rhinoStopping', [1, 2, 3, 4], 4, true);
+            this.animations.add('rhinoWalking', [4, 5, 6], 4, true);
+            this.animations.add('rhinoStopping', [0, 1, 2, 3], 4, true);
+            this.animations.add('rhinoDead', [7], 1, true);
             game.add.existing(this);
             this.anchor.set(0.5, 1);
             this.visible = false; // when created it's not visible
@@ -1140,6 +1145,13 @@ var Sumatra;
             this.body.velocity.x = this.scale.x * this.normVelocity;
             this.animations.stop('rhinoStopping');
             this.animations.play('rhinoWalking');
+        };
+        Rhino.prototype.getKilled = function () {
+            this.movingToLeftOrRight = MovingToLeftOrRightEnum.Dead;
+            this.body.velocity.x = 0;
+            this.animations.stop('rhinoWalking');
+            this.animations.stop('rhinoStopping');
+            this.animations.play('rhinoDead');
         };
         Rhino.prototype.turnAroundAndMove = function () {
             if (this.scale.x > 0) {

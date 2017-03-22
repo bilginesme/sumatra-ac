@@ -46,6 +46,7 @@
             this.load.image('imgBoomWithCannon', './assets/images/BoomWithCannon.png');
             this.load.image('imgBang', './assets/images/Bang.png');
             this.load.image('imgExplosion', './assets/images/ExplosionWithBoom.png');
+            this.load.image('imgRhinoDead', './assets/images/RhinoDead.png');
 
             this.load.image('imgCloudSmall', './assets/images/CloudSmall.png');
             this.load.image('imgCloudLarge', './assets/images/CloudLarge.png');
