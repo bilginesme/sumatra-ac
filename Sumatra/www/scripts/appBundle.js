@@ -492,6 +492,8 @@ var Sumatra;
             this.load.audio('ohNo', './assets/sounds/oh_no.wav', true);
             this.load.audio('gunShot', './assets/sounds/gun_shot.wav', true);
             this.load.audio('gunLoad', './assets/sounds/gun-load.wav', true);
+            for (var i = 1; i <= 5; i++)
+                this.load.audio('eruption' + i, './assets/sounds/eruption' + i + '.wav', true);
             this.load.atlasJSONHash('level01-sprites', './assets/sprites/level01-sprites.png', './assets/sprites/level01-sprites.json');
             this.load.atlasJSONHash('FireballSprite', './assets/sprites/FireballSprite.png', './assets/sprites/FireballSprite.json');
             this.load.atlasJSONHash('JeepExplosion', './assets/sprites/JeepExplosion.png', './assets/sprites/JeepExplosion.json');
@@ -768,6 +770,9 @@ var Sumatra;
             this.animations.stop('fireballAnimation');
         };
         Fireball.prototype.erupt = function () {
+            var k = Math.floor(Math.random() * 5) + 1;
+            this.game.add.audio('eruption' + k, 0.25, false).play();
+            console.info('eruption' + k);
             this.animations.play('fireballAnimation');
             this.position.setTo(this.posInitialX, this.posInitialY);
             this.visible = true;

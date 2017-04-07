@@ -24,6 +24,9 @@
             this.load.audio('gunShot', './assets/sounds/gun_shot.wav', true);
             this.load.audio('gunLoad', './assets/sounds/gun-load.wav', true);
 
+            for (var i= 1; i <= 5; i++)
+                this.load.audio('eruption' + i, './assets/sounds/eruption' + i + '.wav', true);
+
             this.load.atlasJSONHash('level01-sprites', './assets/sprites/level01-sprites.png', './assets/sprites/level01-sprites.json');
             this.load.atlasJSONHash('FireballSprite', './assets/sprites/FireballSprite.png', './assets/sprites/FireballSprite.json');
             this.load.atlasJSONHash('JeepExplosion', './assets/sprites/JeepExplosion.png', './assets/sprites/JeepExplosion.json');
