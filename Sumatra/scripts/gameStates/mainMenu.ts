@@ -1,7 +1,6 @@
 ﻿module Sumatra {
 
     export class MainMenu extends Phaser.State {
-        
         background: Phaser.Sprite;
         logo: Phaser.Sprite;
 

@@ -34,12 +34,10 @@
             this.scale.x = 1;
            
             this.motionState = MotionStateEnum.Idle;
-
             this.engineMovementUp();
         }
 
         update() {
-           
         }
 
         private engineMovementUp() {
@@ -98,8 +96,6 @@
         isIdle() { return this.motionState == MotionStateEnum.Idle; }
         getCanonLocation() { return new Phaser.Point(this.x, this.y - 200); }
         showJeepExplosion() {
-            //this.visible = false;
-            //this.explosion.position.setTo(0, 0);
             this.explosion.visible = true;
             this.explosion.animations.play('jeepExplosionAnimation');
             var tween = this.game.add.tween(this).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
@@ -109,9 +105,6 @@
             this.explosion.visible = false;
             this.alpha = 1;
             this.explosion.alpha = 1;
-            
-            //this.animations.stop('jeepExplosionAnimation');
-            //this.visible = true;
         }
 
     }

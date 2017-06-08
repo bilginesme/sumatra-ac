@@ -1,7 +1,5 @@
 ﻿module Sumatra {
     export class GameOver extends Phaser.Sprite {
-   
-
         constructor(game: Phaser.Game) {
             super(game, game.width / 2, game.height / 2, 'imgGameOver');
 
@@ -23,5 +21,4 @@
             tween.onComplete.add(function () { this.game.add.tween(this.scale).to({ x: 1, y: 1 }, durationShrink, Phaser.Easing.Elastic.Out, true); }, this);
         }
     }
-
 }

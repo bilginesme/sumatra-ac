@@ -3,6 +3,22 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var Sumatra;
+(function (Sumatra) {
+    var GameEngine = (function (_super) {
+        __extends(GameEngine, _super);
+        function GameEngine() {
+            _super.call(this, 1136, 640, Phaser.AUTO, 'content', null);
+            this.state.add('Boot', Sumatra.Boot, false);
+            this.state.add('Preloader', Sumatra.Preloader, false);
+            this.state.add('MainMenu', Sumatra.MainMenu, false);
+            this.state.add('Action', Sumatra.Action, false);
+            this.state.start('Boot');
+        }
+        return GameEngine;
+    }(Phaser.Game));
+    Sumatra.GameEngine = GameEngine;
+})(Sumatra || (Sumatra = {}));
 // For an introduction to the Blank template, see the following documentation:
 // http://go.microsoft.com/fwlink/?LinkID=397705
 // To debug code on page load in Ripple or on Android devices/emulators: launch your app, set breakpoints, 
@@ -36,23 +52,6 @@ var Sumatra;
 })(Sumatra || (Sumatra = {}));
 var Sumatra;
 (function (Sumatra) {
-    var GameEngine = (function (_super) {
-        __extends(GameEngine, _super);
-        function GameEngine() {
-            _super.call(this, 1136, 640, Phaser.AUTO, 'content', null);
-            this.state.add('Boot', Sumatra.Boot, false);
-            this.state.add('Preloader', Sumatra.Preloader, false);
-            this.state.add('MainMenu', Sumatra.MainMenu, false);
-            this.state.add('Level01', Sumatra.Level01, false);
-            this.state.add('Action', Sumatra.Action, false);
-            this.state.start('Boot');
-        }
-        return GameEngine;
-    }(Phaser.Game));
-    Sumatra.GameEngine = GameEngine;
-})(Sumatra || (Sumatra = {}));
-var Sumatra;
-(function (Sumatra) {
     var GameStateEnum;
     (function (GameStateEnum) {
         GameStateEnum[GameStateEnum["NA"] = 0] = "NA";
@@ -74,7 +73,6 @@ var Sumatra;
         Action.prototype.create = function () {
             var _this = this;
             this.physics.startSystem(Phaser.Physics.ARCADE);
-            //this.background = this.add.sprite(0, 0, 'level01-sprites','background');
             this.gameState = GameStateEnum.Running;
             this.add.image(0, 0, 'imgSky');
             this.clouds = new Array(5);
@@ -366,7 +364,6 @@ var Sumatra;
         };
         Action.prototype.createRandomFireball = function () {
             var _this = this;
-            // WARNING --- REMOVE THIS false BELOW
             if (this.gameState == GameStateEnum.Running) {
                 for (var i = 0; i < this.fireballs.length; i++) {
                     if (this.fireballs[i].visible == false) {
@@ -414,31 +411,6 @@ var Sumatra;
         return Boot;
     }(Phaser.State));
     Sumatra.Boot = Boot;
-})(Sumatra || (Sumatra = {}));
-var Sumatra;
-(function (Sumatra) {
-    var Level01 = (function (_super) {
-        __extends(Level01, _super);
-        function Level01() {
-            _super.apply(this, arguments);
-        }
-        Level01.prototype.create = function () {
-            this.physics.startSystem(Phaser.Physics.ARCADE);
-            this.background = this.add.sprite(0, 0, 'level01-sprites', 'background');
-            this.player1 = new Sumatra.Player(this.game, this.world.centerX, 200, 1);
-            this.player1.anchor.setTo(0, 5);
-            this.player2 = new Sumatra.Player(this.game, this.world.centerX, 500, 2);
-            this.player2.anchor.setTo(0, 5);
-            //this.game.debug.text("Use Right and Left arrow keys to move the bat", 0, this.world.height, "red");
-            this.footerText = this.game.add.text(this.world.centerX, this.world.height - 10, "Use Right and Left arrow keys to move the bat", { font: "16px Arial", fill: "#FFFFFF", align: "center" });
-            this.footerText.anchor.setTo(0.5);
-        };
-        Level01.prototype.update = function () {
-            this.footerText.setText(this.game.rnd.integerInRange(1, 100).toString());
-        };
-        return Level01;
-    }(Phaser.State));
-    Sumatra.Level01 = Level01;
 })(Sumatra || (Sumatra = {}));
 var Sumatra;
 (function (Sumatra) {
@@ -492,7 +464,6 @@ var Sumatra;
             this.load.audio('ohNo', './assets/sounds/oh_no.wav', true);
             this.load.audio('gunShot', './assets/sounds/gun_shot.wav', true);
             this.load.audio('gunLoad', './assets/sounds/gun-load.wav', true);
-            this.load.atlasJSONHash('level01-sprites', './assets/sprites/level01-sprites.png', './assets/sprites/level01-sprites.json');
             this.load.atlasJSONHash('FireballSprite', './assets/sprites/FireballSprite.png', './assets/sprites/FireballSprite.json');
             this.load.atlasJSONHash('JeepExplosion', './assets/sprites/JeepExplosion.png', './assets/sprites/JeepExplosion.json');
             this.load.atlasJSONHash('RhinoSpriteSheet', './assets/sprites/RhinoSpriteSheet.png', './assets/sprites/RhinoSpriteSheet.json');
@@ -1030,46 +1001,6 @@ var Sumatra;
         return JeepFoo;
     }(Phaser.Sprite));
     Sumatra.JeepFoo = JeepFoo;
-})(Sumatra || (Sumatra = {}));
-var Sumatra;
-(function (Sumatra) {
-    var Player = (function (_super) {
-        __extends(Player, _super);
-        function Player(game, x, y, num) {
-            _super.call(this, game, x, y, 'level01-sprites', 1);
-            this.anchor.setTo(0.5);
-            this.animations.add('fly', [0, 1], 5, true);
-            game.add.existing(this);
-            this.num = num;
-            // Physics
-            game.physics.enable(this);
-            this.body.collideWorldBounds = true;
-            this.body.setCircle(20);
-            this.footerText = this.game.add.text(10, 15 * num, "Bilgin Eşme", { font: "12px Arial", fill: "#FFFFFF", align: "center" });
-        }
-        Player.prototype.update = function () {
-            this.body.velocity.x = 0;
-            var velocity = this.game.rnd.integerInRange(1, 100);
-            this.footerText.setText(velocity.toString());
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-                this.body.velocity.x = -velocity;
-                this.animations.play('fly');
-                if (this.scale.x === -1)
-                    this.scale.x = 1;
-            }
-            else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
-                this.body.velocity.x = velocity;
-                this.animations.play('fly');
-                if (this.scale.x === 1)
-                    this.scale.x = -1;
-            }
-            else {
-                this.animations.frame = 0;
-            }
-        };
-        return Player;
-    }(Phaser.Sprite));
-    Sumatra.Player = Player;
 })(Sumatra || (Sumatra = {}));
 var Sumatra;
 (function (Sumatra) {

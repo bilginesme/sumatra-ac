@@ -19,7 +19,6 @@
             this.posInitialX = x;
             this.posInitialY = y;
             this.isHitOnGround = false;
-
         }
 
         update() {

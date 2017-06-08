@@ -31,9 +31,6 @@
         
         create() {
             this.physics.startSystem(Phaser.Physics.ARCADE);
-
-            //this.background = this.add.sprite(0, 0, 'level01-sprites','background');
-
             this.gameState = GameStateEnum.Running;
 
             this.add.image(0, 0, 'imgSky');
@@ -132,16 +129,13 @@
                     this.jeep.endMotion();
                     this.statusText1.setText(this.jeep.motionState.toString());
                 }
- 
             }
 
             this.handleJeepMovement();
-
             this.checkJeepHit();
             this.checkJeepRhinoVicinity();
             this.checkWhetherRhinoShot();
             this.checkFireballHit();
-
             this.statusText2.setText("Fireball Duration : " + Fireball.durationForNewFireball);
         }
         onTap(pointer, doubleTap) {
@@ -204,9 +198,7 @@
             if (this.gameState == GameStateEnum.Running && this.jeep.isMoving()) {
                 this.jeep.x = this.game.input.x - this.jeep.xMovementOffset;
                 this.cleanAllFooElements();
-
                 this.jeep.xPrevious = this.jeep.x;
-
                 this.statusText1.setText("Moving " + this.jeep.xPrevious);
             }
         }
@@ -393,8 +385,6 @@
         }
  
         private createRandomFireball() {
-           
-            // WARNING --- REMOVE THIS false BELOW
             if (this.gameState == GameStateEnum.Running) {
                 for (var i = 0; i < this.fireballs.length; i++) {
                     if (this.fireballs[i].visible == false) {
@@ -402,11 +392,6 @@
                         break;
                     }
                 }
-
-                
-
-                //var time = new Date().getTime();
-                //this.statusText3.setText(time.toString());
             }
 
             setTimeout(() => this.createRandomFireball(), Fireball.durationForNewFireball);

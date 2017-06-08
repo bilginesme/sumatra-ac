@@ -5,7 +5,6 @@
         footerText: Phaser.Text;
 
         preload() {
-            
             this.loaderText = this.game.add.text(this.world.centerX, 200, "Loading...", { font: "18px Arial", fill: "#A9A91111", align: "center" });
             this.loaderText.anchor.setTo(0.5);
 
@@ -14,7 +13,6 @@
 
             this.load.image('titlepage', './assets/images/Welcome.png');
             this.load.image('logo', './assets/ui/gameLogo.png');
-
             this.load.audio('click', './assets/sounds/click.ogg', true);
             this.load.audio('intro', './assets/sounds/intro.wav', true);
             this.load.audio('soundBazooka', './assets/sounds/bazooka.wav', true);
@@ -24,7 +22,6 @@
             this.load.audio('gunShot', './assets/sounds/gun_shot.wav', true);
             this.load.audio('gunLoad', './assets/sounds/gun-load.wav', true);
 
-            this.load.atlasJSONHash('level01-sprites', './assets/sprites/level01-sprites.png', './assets/sprites/level01-sprites.json');
             this.load.atlasJSONHash('FireballSprite', './assets/sprites/FireballSprite.png', './assets/sprites/FireballSprite.json');
             this.load.atlasJSONHash('JeepExplosion', './assets/sprites/JeepExplosion.png', './assets/sprites/JeepExplosion.json');
             this.load.atlasJSONHash('RhinoSpriteSheet', './assets/sprites/RhinoSpriteSheet.png', './assets/sprites/RhinoSpriteSheet.json');
@@ -50,7 +47,6 @@
 
             this.load.image('imgCloudSmall', './assets/images/CloudSmall.png');
             this.load.image('imgCloudLarge', './assets/images/CloudLarge.png');
-
             this.load.image('imgVolcanoCrest', './assets/images/VolcanoCrest.png');
             this.load.image('imgVolcanoSmoke', './assets/images/VolcanoSmoke.png');
 
