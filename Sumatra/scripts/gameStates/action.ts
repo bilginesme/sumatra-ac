@@ -1,6 +1,6 @@
 ﻿module Sumatra {
     enum GameStateEnum { NA = 0, Running = 1, LostOneLife = 2, GameOver = 9 }
-
+    
     export class Action extends Phaser.State {
         private background: Phaser.Sprite;
         private music: Phaser.Sound;
@@ -27,8 +27,10 @@
         private numLives: number = 3;
         private points: number = 0;
         private pointsForShootingMovingJeep: number = 100;
-        private pointsForShootingMotionlessJeep: number = 25;
-        
+        private pointsForShootingStoppingJeep: number = 25;
+        private point100: Phaser.Sprite;
+        private point25: Phaser.Sprite;
+
         create() {
             this.physics.startSystem(Phaser.Physics.ARCADE);
             this.gameState = GameStateEnum.Running;
@@ -53,6 +55,8 @@
             this.boom = this.add.sprite(0, 0, 'imgBoom');
             this.boom.anchor.setTo(0.5);
             this.boom.visible = false;
+
+           
 
             this.explosion = this.add.sprite(0, 0, 'imgExplosion');
             this.explosion.anchor.setTo(0.5);
@@ -101,6 +105,15 @@
             this.billboardPoints.anchor.setTo(0.5);
             this.billboardPoints.changeValue(this.points, false);
 
+            this.point100 = this.add.sprite(0, 0, 'imgPoint100');
+            this.point100.anchor.setTo(0.5);
+            this.point100.visible = false;
+
+            this.point25 = this.add.sprite(0, 0, 'imgPoint25');
+            this.point25.anchor.setTo(0.5);
+            this.point25.visible = false;
+
+
             this.gameOver = new GameOver(this.game);
             this.gameOver.anchor.setTo(0.5);
 
@@ -111,9 +124,8 @@
             setTimeout(() => this.rhino.giveLife(), 1000);
             setTimeout(() => this.createRandomFireball(), 5000);
 
-            this.game.add.audio('intro', 0.25, false).play()
+            this.game.add.audio('intro', 0.95, false).play()
         }
-
         update() {
             if (this.game.input.activePointer.isDown) {
                 if (this.jeep.isInArea(this.game.input.x, this.game.input.y)) {
@@ -132,7 +144,7 @@
             }
 
             this.handleJeepMovement();
-            this.checkJeepHit();
+            this.checkJeepFooHit();
             this.checkJeepRhinoVicinity();
             this.checkWhetherRhinoShot();
             this.checkFireballHit();
@@ -179,11 +191,10 @@
                 }
             }
         }
-
         private addPoints(p: number) {
             if (this.gameState == GameStateEnum.Running) {
                 this.points += p;
-                this.billboardPoints.changeValue(this.points, true);
+                this.billboardPoints.changeValue(this.points, true);                
             }
         }
 
@@ -255,17 +266,21 @@
             setTimeout(() => this.createRandomJeepFoo(), 2000);
         }
 
-        private checkJeepHit() {
+        private checkJeepFooHit() {
             if (this.cannon.checkHitOnGround()) {
                 this.createBoom(this.cannon.getCannonPosition().x, this.cannon.getCannonPosition().y);
 
                 for (var i = 0; i < this.jeepsFoo.length; i++) {
                     if (this.jeepsFoo[i].visible && this.jeepsFoo[i].overlap(this.cannon))
-                     {
-                        if (this.jeepsFoo[i].isMoving())
+                    {
+                        if (this.jeepsFoo[i].isMoving()) {
                             this.addPoints(this.pointsForShootingMovingJeep);
-                        else
-                            this.addPoints(this.pointsForShootingMotionlessJeep);
+                            this.createFlyingPoint(this.pointsForShootingMovingJeep, this.jeepsFoo[i].x, this.jeepsFoo[i].y);
+                        }
+                        else {
+                            this.addPoints(this.pointsForShootingStoppingJeep);
+                            this.createFlyingPoint(this.pointsForShootingStoppingJeep, this.jeepsFoo[i].x, this.jeepsFoo[i].y);
+                        }
 
                         this.jeepsFoo[i].hideMe();
                         this.createExplosion(this.cannon.getCannonPosition().x, this.cannon.getCannonPosition().y);
@@ -318,7 +333,6 @@
                 }
             }
         }
-
         private createBoom(x, y) {
             this.boom.position.set(x, y);
             this.boom.visible = true;
@@ -329,6 +343,31 @@
 
             var tweenAlpha = this.game.add.tween(this.boom).to({ alpha: 1 }, 200, Phaser.Easing.Linear.None, true);
             tweenAlpha.onComplete.add(function () { this.game.add.tween(this.boom).to({ alpha: 0 }, 1500, Phaser.Easing.Linear.None, true); }, this);
+        }
+        private createFlyingPoint(point: number, x: number, y: number) {
+            
+            var img: Phaser.Sprite;
+            if (point == 100)
+                img = this.point100;
+            else
+                img = this.point25;
+
+            img.position.set(x, y);
+            img.visible = true;
+            img.alpha = 0;
+            img.scale.x = 0;
+            img.scale.y = 0;
+
+            var xPos = this.game.rnd.between(0, this.game.width);
+
+            var tween = this.game.add.tween(img.position).to({ x: xPos, y: 0 }, 1500, Phaser.Easing.Linear.None, true);
+            tween.onComplete.add(function () {  }, this);
+
+            var tween = this.game.add.tween(img.scale).to({ x: 1, y: 1 }, 500, Phaser.Easing.Linear.None, true);
+            tween.onComplete.add(function () {  }, this);
+
+            var tweenAlpha = this.game.add.tween(img).to({ alpha: 1 }, 200, Phaser.Easing.Linear.None, true);
+            tweenAlpha.onComplete.add(function () { this.game.add.tween(img).to({ alpha: 0 }, 1500, Phaser.Easing.Linear.None, true); }, this);
         }
         private createJeepExplosion(x, y) {
             this.jeepExplosion.position.set(x, y);
@@ -341,7 +380,6 @@
             var tweenAlpha = this.game.add.tween(this.jeepExplosion).to({ alpha: 1 }, 200, Phaser.Easing.Linear.None, true);
             tweenAlpha.onComplete.add(function () { this.game.add.tween(this.jeepExplosion).to({ alpha: 0 }, 1500, Phaser.Easing.Linear.None, true); }, this);
         }
-        
         private createBoomWithCannon(x, y) {
             this.boomWithCannon.position.set(x, y);
             this.boomWithCannon.visible = true;
@@ -383,7 +421,6 @@
                 
             }
         }
- 
         private createRandomFireball() {
             if (this.gameState == GameStateEnum.Running) {
                 for (var i = 0; i < this.fireballs.length; i++) {

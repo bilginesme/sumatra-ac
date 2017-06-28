@@ -68,7 +68,7 @@ var Sumatra;
             this.numLives = 3;
             this.points = 0;
             this.pointsForShootingMovingJeep = 100;
-            this.pointsForShootingMotionlessJeep = 25;
+            this.pointsForShootingStoppingJeep = 25;
         }
         Action.prototype.create = function () {
             var _this = this;
@@ -124,6 +124,12 @@ var Sumatra;
             this.billboardPoints = new Sumatra.Billboard(this.game, new Phaser.Point(this.game.width - 100, 40), Sumatra.BillboardTypeEnum.Points);
             this.billboardPoints.anchor.setTo(0.5);
             this.billboardPoints.changeValue(this.points, false);
+            this.point100 = this.add.sprite(0, 0, 'imgPoint100');
+            this.point100.anchor.setTo(0.5);
+            this.point100.visible = false;
+            this.point25 = this.add.sprite(0, 0, 'imgPoint25');
+            this.point25.anchor.setTo(0.5);
+            this.point25.visible = false;
             this.gameOver = new Sumatra.GameOver(this.game);
             this.gameOver.anchor.setTo(0.5);
             this.game.input.onTap.add(this.onTap, this);
@@ -131,7 +137,7 @@ var Sumatra;
             setTimeout(function () { return _this.createRandomJeepFoo(); }, 1000);
             setTimeout(function () { return _this.rhino.giveLife(); }, 1000);
             setTimeout(function () { return _this.createRandomFireball(); }, 5000);
-            this.game.add.audio('intro', 0.25, false).play();
+            this.game.add.audio('intro', 0.95, false).play();
         };
         Action.prototype.update = function () {
             if (this.game.input.activePointer.isDown) {
@@ -149,7 +155,7 @@ var Sumatra;
                 }
             }
             this.handleJeepMovement();
-            this.checkJeepHit();
+            this.checkJeepFooHit();
             this.checkJeepRhinoVicinity();
             this.checkWhetherRhinoShot();
             this.checkFireballHit();
@@ -253,16 +259,20 @@ var Sumatra;
             this.rhino.restart();
             setTimeout(function () { return _this.createRandomJeepFoo(); }, 2000);
         };
-        Action.prototype.checkJeepHit = function () {
+        Action.prototype.checkJeepFooHit = function () {
             var _this = this;
             if (this.cannon.checkHitOnGround()) {
                 this.createBoom(this.cannon.getCannonPosition().x, this.cannon.getCannonPosition().y);
                 for (var i = 0; i < this.jeepsFoo.length; i++) {
                     if (this.jeepsFoo[i].visible && this.jeepsFoo[i].overlap(this.cannon)) {
-                        if (this.jeepsFoo[i].isMoving())
+                        if (this.jeepsFoo[i].isMoving()) {
                             this.addPoints(this.pointsForShootingMovingJeep);
-                        else
-                            this.addPoints(this.pointsForShootingMotionlessJeep);
+                            this.createFlyingPoint(this.pointsForShootingMovingJeep, this.jeepsFoo[i].x, this.jeepsFoo[i].y);
+                        }
+                        else {
+                            this.addPoints(this.pointsForShootingStoppingJeep);
+                            this.createFlyingPoint(this.pointsForShootingStoppingJeep, this.jeepsFoo[i].x, this.jeepsFoo[i].y);
+                        }
                         this.jeepsFoo[i].hideMe();
                         this.createExplosion(this.cannon.getCannonPosition().x, this.cannon.getCannonPosition().y);
                         setTimeout(function () { return _this.createRandomJeepFoo(); }, 2000);
@@ -317,6 +327,25 @@ var Sumatra;
             tween.onComplete.add(function () { this.game.add.tween(this.boom.scale).to({ x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true); }, this);
             var tweenAlpha = this.game.add.tween(this.boom).to({ alpha: 1 }, 200, Phaser.Easing.Linear.None, true);
             tweenAlpha.onComplete.add(function () { this.game.add.tween(this.boom).to({ alpha: 0 }, 1500, Phaser.Easing.Linear.None, true); }, this);
+        };
+        Action.prototype.createFlyingPoint = function (point, x, y) {
+            var img;
+            if (point == 100)
+                img = this.point100;
+            else
+                img = this.point25;
+            img.position.set(x, y);
+            img.visible = true;
+            img.alpha = 0;
+            img.scale.x = 0;
+            img.scale.y = 0;
+            var xPos = this.game.rnd.between(0, this.game.width);
+            var tween = this.game.add.tween(img.position).to({ x: xPos, y: 0 }, 1500, Phaser.Easing.Linear.None, true);
+            tween.onComplete.add(function () { }, this);
+            var tween = this.game.add.tween(img.scale).to({ x: 1, y: 1 }, 500, Phaser.Easing.Linear.None, true);
+            tween.onComplete.add(function () { }, this);
+            var tweenAlpha = this.game.add.tween(img).to({ alpha: 1 }, 200, Phaser.Easing.Linear.None, true);
+            tweenAlpha.onComplete.add(function () { this.game.add.tween(img).to({ alpha: 0 }, 1500, Phaser.Easing.Linear.None, true); }, this);
         };
         Action.prototype.createJeepExplosion = function (x, y) {
             this.jeepExplosion.position.set(x, y);
@@ -484,6 +513,8 @@ var Sumatra;
             this.load.image('imgBang', './assets/images/Bang.png');
             this.load.image('imgExplosion', './assets/images/ExplosionWithBoom.png');
             this.load.image('imgRhinoDead', './assets/images/RhinoDead.png');
+            this.load.image('imgPoint100', './assets/images/point-100.png');
+            this.load.image('imgPoint25', './assets/images/point-25.png');
             this.load.image('imgCloudSmall', './assets/images/CloudSmall.png');
             this.load.image('imgCloudLarge', './assets/images/CloudLarge.png');
             this.load.image('imgVolcanoCrest', './assets/images/VolcanoCrest.png');
@@ -865,8 +896,6 @@ var Sumatra;
         Jeep.prototype.isIdle = function () { return this.motionState == MotionStateEnum.Idle; };
         Jeep.prototype.getCanonLocation = function () { return new Phaser.Point(this.x, this.y - 200); };
         Jeep.prototype.showJeepExplosion = function () {
-            //this.visible = false;
-            //this.explosion.position.setTo(0, 0);
             this.explosion.visible = true;
             this.explosion.animations.play('jeepExplosionAnimation');
             var tween = this.game.add.tween(this).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
@@ -876,8 +905,6 @@ var Sumatra;
             this.explosion.visible = false;
             this.alpha = 1;
             this.explosion.alpha = 1;
-            //this.animations.stop('jeepExplosionAnimation');
-            //this.visible = true;
         };
         return Jeep;
     }(Phaser.Sprite));

@@ -44,6 +44,8 @@
             this.load.image('imgBang', './assets/images/Bang.png');
             this.load.image('imgExplosion', './assets/images/ExplosionWithBoom.png');
             this.load.image('imgRhinoDead', './assets/images/RhinoDead.png');
+            this.load.image('imgPoint100', './assets/images/point-100.png');
+            this.load.image('imgPoint25', './assets/images/point-25.png');
 
             this.load.image('imgCloudSmall', './assets/images/CloudSmall.png');
             this.load.image('imgCloudLarge', './assets/images/CloudLarge.png');
