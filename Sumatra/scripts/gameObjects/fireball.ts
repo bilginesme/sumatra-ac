@@ -68,6 +68,10 @@
             this.animations.stop('fireballAnimation');
         }
         erupt() {
+            var k = Math.floor(Math.random() * 5) + 1;
+            this.game.add.audio('eruption' + k, 0.25, false).play()
+            console.info('eruption' + k);
+
             this.animations.play('fireballAnimation');
             this.position.setTo(this.posInitialX, this.posInitialY);
             this.visible = true;
