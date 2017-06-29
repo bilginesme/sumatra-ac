@@ -155,7 +155,10 @@
                 this.statusText1.setText("double");
             }
             else {
-                if (this.gameState == GameStateEnum.Running && this.jeep.isInArea(this.game.input.x, this.game.input.y)) {
+                if (this.gameState == GameStateEnum.Running
+                    && this.jeep.isInArea(this.game.input.x, this.game.input.y)
+                    && !this.rhino.isDead())
+                {
                     this.jeep.tickleMe(this.game.input.x, this.game.input.y);
 
                     if (this.cannon.startFiring())
@@ -267,7 +270,7 @@
         }
 
         private checkJeepFooHit() {
-            if (this.cannon.checkHitOnGround()) {
+            if (!this.rhino.isDead() && this.cannon.checkHitOnGround()) {
                 this.createBoom(this.cannon.getCannonPosition().x, this.cannon.getCannonPosition().y);
 
                 for (var i = 0; i < this.jeepsFoo.length; i++) {

@@ -11,12 +11,17 @@
         private durationEngineUp: number = 250;
         private durationEngineDown: number = 1250;
         private explosion: Phaser.Sprite;
+        private driver: Phaser.Sprite;
 
         constructor(game: Phaser.Game, x: number, y: number) {
             super(game, x, y, 'imgJeep');
             game.add.existing(this);
             this.anchor.set(0.5, 1);
-            
+
+            this.driver = new Phaser.Sprite(game, -20, -110, "imgDriver");
+            this.driver.anchor.setTo(0.5, 1);
+            this.addChild(this.driver);
+
             this.explosion = new Phaser.Sprite(game, 0, 0, "JeepExplosion", 1);
             this.explosion.animations.add('jeepExplosionAnimation', null, 5, false);
             this.explosion.anchor.setTo(0.5, 1);

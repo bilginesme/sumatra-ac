@@ -166,7 +166,9 @@ var Sumatra;
                 this.statusText1.setText("double");
             }
             else {
-                if (this.gameState == GameStateEnum.Running && this.jeep.isInArea(this.game.input.x, this.game.input.y)) {
+                if (this.gameState == GameStateEnum.Running
+                    && this.jeep.isInArea(this.game.input.x, this.game.input.y)
+                    && !this.rhino.isDead()) {
                     this.jeep.tickleMe(this.game.input.x, this.game.input.y);
                     if (this.cannon.startFiring())
                         this.createBoomWithCannon(this.jeep.getCanonLocation().x, this.jeep.getCanonLocation().y);
@@ -261,7 +263,7 @@ var Sumatra;
         };
         Action.prototype.checkJeepFooHit = function () {
             var _this = this;
-            if (this.cannon.checkHitOnGround()) {
+            if (!this.rhino.isDead() && this.cannon.checkHitOnGround()) {
                 this.createBoom(this.cannon.getCannonPosition().x, this.cannon.getCannonPosition().y);
                 for (var i = 0; i < this.jeepsFoo.length; i++) {
                     if (this.jeepsFoo[i].visible && this.jeepsFoo[i].overlap(this.cannon)) {
@@ -493,6 +495,8 @@ var Sumatra;
             this.load.audio('ohNo', './assets/sounds/oh_no.wav', true);
             this.load.audio('gunShot', './assets/sounds/gun_shot.wav', true);
             this.load.audio('gunLoad', './assets/sounds/gun-load.wav', true);
+            for (var i = 1; i <= 5; i++)
+                this.load.audio('eruption' + i, './assets/sounds/eruption' + i + '.wav', true);
             this.load.atlasJSONHash('FireballSprite', './assets/sprites/FireballSprite.png', './assets/sprites/FireballSprite.json');
             this.load.atlasJSONHash('JeepExplosion', './assets/sprites/JeepExplosion.png', './assets/sprites/JeepExplosion.json');
             this.load.atlasJSONHash('RhinoSpriteSheet', './assets/sprites/RhinoSpriteSheet.png', './assets/sprites/RhinoSpriteSheet.json');
@@ -503,6 +507,7 @@ var Sumatra;
             this.load.image('imgGround3', './assets/images/Ground3.png');
             this.load.image('imgBushes', './assets/images/Bushes.png');
             this.load.image('imgJeep', './assets/images/Jeep.png');
+            this.load.image('imgDriver', './assets/images/driver.png');
             this.load.image('imgJeepFoo', './assets/images/JeepFoo.png');
             this.load.image('imgHunterSitting', './assets/images/HunterSitting.png');
             this.load.image('imgHunterStanding', './assets/images/HunterStanding.png');
@@ -770,6 +775,9 @@ var Sumatra;
             this.animations.stop('fireballAnimation');
         };
         Fireball.prototype.erupt = function () {
+            var k = Math.floor(Math.random() * 5) + 1;
+            this.game.add.audio('eruption' + k, 0.25, false).play();
+            //console.info('eruption' + k);
             this.animations.play('fireballAnimation');
             this.position.setTo(this.posInitialX, this.posInitialY);
             this.visible = true;
@@ -827,6 +835,9 @@ var Sumatra;
             this.durationEngineDown = 1250;
             game.add.existing(this);
             this.anchor.set(0.5, 1);
+            this.driver = new Phaser.Sprite(game, -20, -110, "imgDriver");
+            this.driver.anchor.setTo(0.5, 1);
+            this.addChild(this.driver);
             this.explosion = new Phaser.Sprite(game, 0, 0, "JeepExplosion", 1);
             this.explosion.animations.add('jeepExplosionAnimation', null, 5, false);
             this.explosion.anchor.setTo(0.5, 1);
@@ -1072,6 +1083,7 @@ var Sumatra;
             this.stop();
         };
         Rhino.prototype.isStoppingNow = function () { return this.movingToLeftOrRight == MovingToLeftOrRightEnum.Stopping; };
+        Rhino.prototype.isDead = function () { return this.movingToLeftOrRight == MovingToLeftOrRightEnum.Dead; };
         Rhino.prototype.giveLife = function () {
             if (!this.visible) {
                 this.visible = true;

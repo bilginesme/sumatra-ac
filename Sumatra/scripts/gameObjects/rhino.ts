@@ -46,7 +46,7 @@
         }
          
         isStoppingNow(): boolean { return this.movingToLeftOrRight == MovingToLeftOrRightEnum.Stopping; }
-        
+        isDead(): boolean { return this.movingToLeftOrRight == MovingToLeftOrRightEnum.Dead; }
 
         giveLife(): void {
             if (!this.visible) {
