@@ -3,6 +3,7 @@
 
     export class Billboard extends Phaser.Sprite {
         private txt: Phaser.Text;
+        private txtHiScore: Phaser.Text;
         private value: number;
 
         constructor(game: Phaser.Game, pos: Phaser.Point, billboardType: BillboardTypeEnum) {
@@ -16,6 +17,11 @@
 
             this.txt = this.game.add.text(pos.x + 20, pos.y, "", { font: "bold 32px Arial", fill: "#FFFFFF", align: "center" });
             this.txt.anchor.setTo(0.5);
+
+            if (billboardType == BillboardTypeEnum.Points) {
+                this.txtHiScore = this.game.add.text(pos.x + 20, pos.y + 50, "HI-SCORE", { font: "bold 18px Arial", fill: "#FFFFFF", align: "center" });
+                this.txtHiScore.anchor.setTo(0.5);
+            }
 
             this.value = 0;
         }

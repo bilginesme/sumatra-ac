@@ -342,9 +342,11 @@ var Sumatra;
             img.scale.x = 0;
             img.scale.y = 0;
             var xPos = this.game.rnd.between(0, this.game.width);
-            var tween = this.game.add.tween(img.position).to({ x: xPos, y: 0 }, 1500, Phaser.Easing.Linear.None, true);
+            var distance = Math.sqrt(Math.pow(Math.abs(xPos - x), 2) + Math.pow(y, 2));
+            var duration = 1500 * (distance / 500);
+            var tween = this.game.add.tween(img.position).to({ x: xPos, y: 0 }, duration, Phaser.Easing.Linear.None, true);
             tween.onComplete.add(function () { }, this);
-            var tween = this.game.add.tween(img.scale).to({ x: 1, y: 1 }, 500, Phaser.Easing.Linear.None, true);
+            var tween = this.game.add.tween(img.scale).to({ x: 1, y: 1 }, 600, Phaser.Easing.Linear.None, true);
             tween.onComplete.add(function () { }, this);
             var tweenAlpha = this.game.add.tween(img).to({ alpha: 1 }, 200, Phaser.Easing.Linear.None, true);
             tweenAlpha.onComplete.add(function () { this.game.add.tween(img).to({ alpha: 0 }, 1500, Phaser.Easing.Linear.None, true); }, this);
@@ -558,6 +560,10 @@ var Sumatra;
             this.anchor.set(0.5);
             this.txt = this.game.add.text(pos.x + 20, pos.y, "", { font: "bold 32px Arial", fill: "#FFFFFF", align: "center" });
             this.txt.anchor.setTo(0.5);
+            if (billboardType == BillboardTypeEnum.Points) {
+                this.txtHiScore = this.game.add.text(pos.x + 20, pos.y + 50, "HI-SCORE", { font: "bold 18px Arial", fill: "#FFFFFF", align: "center" });
+                this.txtHiScore.anchor.setTo(0.5);
+            }
             this.value = 0;
         }
         Billboard.prototype.update = function () {

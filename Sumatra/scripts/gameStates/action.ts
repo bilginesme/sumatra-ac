@@ -348,7 +348,6 @@
             tweenAlpha.onComplete.add(function () { this.game.add.tween(this.boom).to({ alpha: 0 }, 1500, Phaser.Easing.Linear.None, true); }, this);
         }
         private createFlyingPoint(point: number, x: number, y: number) {
-            
             var img: Phaser.Sprite;
             if (point == 100)
                 img = this.point100;
@@ -362,11 +361,13 @@
             img.scale.y = 0;
 
             var xPos = this.game.rnd.between(0, this.game.width);
+            var distance = Math.sqrt(Math.pow(Math.abs(xPos - x), 2) + Math.pow(y, 2));
+            var duration = 1500 * (distance / 500);
 
-            var tween = this.game.add.tween(img.position).to({ x: xPos, y: 0 }, 1500, Phaser.Easing.Linear.None, true);
+            var tween = this.game.add.tween(img.position).to({ x: xPos, y: 0 }, duration, Phaser.Easing.Linear.None, true);
             tween.onComplete.add(function () {  }, this);
 
-            var tween = this.game.add.tween(img.scale).to({ x: 1, y: 1 }, 500, Phaser.Easing.Linear.None, true);
+            var tween = this.game.add.tween(img.scale).to({ x: 1, y: 1 }, 600, Phaser.Easing.Linear.None, true);
             tween.onComplete.add(function () {  }, this);
 
             var tweenAlpha = this.game.add.tween(img).to({ alpha: 1 }, 200, Phaser.Easing.Linear.None, true);
