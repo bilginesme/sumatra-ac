@@ -1,19 +1,25 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var Sumatra;
 (function (Sumatra) {
     var GameEngine = (function (_super) {
         __extends(GameEngine, _super);
         function GameEngine() {
-            _super.call(this, 1136, 640, Phaser.AUTO, 'content', null);
-            this.state.add('Boot', Sumatra.Boot, false);
-            this.state.add('Preloader', Sumatra.Preloader, false);
-            this.state.add('MainMenu', Sumatra.MainMenu, false);
-            this.state.add('Action', Sumatra.Action, false);
-            this.state.start('Boot');
+            var _this = _super.call(this, 1136, 640, Phaser.AUTO, 'content', null) || this;
+            _this.state.add('Boot', Sumatra.Boot, false);
+            _this.state.add('Preloader', Sumatra.Preloader, false);
+            _this.state.add('MainMenu', Sumatra.MainMenu, false);
+            _this.state.add('Action', Sumatra.Action, false);
+            _this.state.start('Boot');
+            return _this;
         }
         return GameEngine;
     }(Phaser.Game));
@@ -62,16 +68,18 @@ var Sumatra;
     var Action = (function (_super) {
         __extends(Action, _super);
         function Action() {
-            _super.apply(this, arguments);
-            this.gameState = GameStateEnum.NA;
-            this.maxJeepsFoo = 5;
-            this.numLives = 3;
-            this.points = 0;
-            this.pointsForShootingMovingJeep = 100;
-            this.pointsForShootingStoppingJeep = 25;
+            var _this = _super !== null && _super.apply(this, arguments) || this;
+            _this.gameState = GameStateEnum.NA;
+            _this.maxJeepsFoo = 5;
+            _this.numLives = 3;
+            _this.points = 0;
+            _this.pointsForShootingMovingJeep = 100;
+            _this.pointsForShootingStoppingJeep = 25;
+            return _this;
         }
         Action.prototype.create = function () {
             var _this = this;
+            window.localStorage.removeItem('hiScore');
             this.physics.startSystem(Phaser.Physics.ARCADE);
             this.gameState = GameStateEnum.Running;
             this.add.image(0, 0, 'imgSky');
@@ -203,6 +211,13 @@ var Sumatra;
             if (this.gameState == GameStateEnum.Running) {
                 this.points += p;
                 this.billboardPoints.changeValue(this.points, true);
+                var strHiScore = window.localStorage.getItem('hiScore');
+                var hiScore = 0;
+                if (strHiScore != null) {
+                    hiScore = parseInt(strHiScore);
+                }
+                if (this.points > hiScore)
+                    this.billboardPoints.setHiScoreValue(this.points);
             }
         };
         Action.prototype.cleanAllFooElements = function () {
@@ -416,7 +431,7 @@ var Sumatra;
     var Boot = (function (_super) {
         __extends(Boot, _super);
         function Boot() {
-            _super.apply(this, arguments);
+            return _super !== null && _super.apply(this, arguments) || this;
         }
         Boot.prototype.preload = function () {
             //You can preload an image here if you dont want to use text for the loading screen
@@ -427,6 +442,7 @@ var Sumatra;
             this.stage.disableVisibilityChange = true;
             if (this.game.device.desktop) {
                 this.scale.pageAlignHorizontally = true;
+                //this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
             }
             else {
                 // mobile
@@ -450,7 +466,7 @@ var Sumatra;
     var MainMenu = (function (_super) {
         __extends(MainMenu, _super);
         function MainMenu() {
-            _super.apply(this, arguments);
+            return _super !== null && _super.apply(this, arguments) || this;
         }
         MainMenu.prototype.create = function () {
             this.background = this.add.sprite(0, 0, 'titlepage');
@@ -480,7 +496,7 @@ var Sumatra;
     var Preloader = (function (_super) {
         __extends(Preloader, _super);
         function Preloader() {
-            _super.apply(this, arguments);
+            return _super !== null && _super.apply(this, arguments) || this;
         }
         Preloader.prototype.preload = function () {
             this.loaderText = this.game.add.text(this.world.centerX, 200, "Loading...", { font: "18px Arial", fill: "#A9A91111", align: "center" });
@@ -544,27 +560,32 @@ var Sumatra;
 })(Sumatra || (Sumatra = {}));
 var Sumatra;
 (function (Sumatra) {
+    var BillboardTypeEnum;
     (function (BillboardTypeEnum) {
         BillboardTypeEnum[BillboardTypeEnum["Lives"] = 0] = "Lives";
         BillboardTypeEnum[BillboardTypeEnum["Points"] = 1] = "Points";
-    })(Sumatra.BillboardTypeEnum || (Sumatra.BillboardTypeEnum = {}));
-    var BillboardTypeEnum = Sumatra.BillboardTypeEnum;
+    })(BillboardTypeEnum = Sumatra.BillboardTypeEnum || (Sumatra.BillboardTypeEnum = {}));
     var Billboard = (function (_super) {
         __extends(Billboard, _super);
         function Billboard(game, pos, billboardType) {
+            var _this = this;
             if (billboardType == BillboardTypeEnum.Lives)
-                _super.call(this, game, pos.x, pos.y, 'imgBGLives');
+                _this = _super.call(this, game, pos.x, pos.y, 'imgBGLives') || this;
             else
-                _super.call(this, game, pos.x, pos.y, 'imgBGPoints');
-            game.add.existing(this);
-            this.anchor.set(0.5);
-            this.txt = this.game.add.text(pos.x + 20, pos.y, "", { font: "bold 32px Arial", fill: "#FFFFFF", align: "center" });
-            this.txt.anchor.setTo(0.5);
+                _this = _super.call(this, game, pos.x, pos.y, 'imgBGPoints') || this;
+            game.add.existing(_this);
+            _this.anchor.set(0.5);
+            _this.txt = _this.game.add.text(pos.x + 20, pos.y, "", { font: "bold 32px Arial", fill: "#FFFFFF", align: "center" });
+            _this.txt.anchor.setTo(0.5);
             if (billboardType == BillboardTypeEnum.Points) {
-                this.txtHiScore = this.game.add.text(pos.x + 20, pos.y + 50, "HI-SCORE", { font: "bold 18px Arial", fill: "#FFFFFF", align: "center" });
-                this.txtHiScore.anchor.setTo(0.5);
+                _this.txtHiScoreTitle = _this.game.add.text(pos.x + 20, pos.y + 50, "HI-SCORE", { font: "bold 18px Arial", fill: "#FFFFFF", align: "center" });
+                _this.txtHiScoreTitle.anchor.setTo(0.5);
+                var strHiScore = window.localStorage.getItem('hiScore');
+                _this.txtHiScoreValue = _this.game.add.text(pos.x + 20, pos.y + 70, strHiScore, { font: "bold 14px Arial", fill: "#FFFFFF", align: "center" });
+                _this.txtHiScoreValue.anchor.setTo(0.5);
             }
-            this.value = 0;
+            _this.value = 0;
+            return _this;
         }
         Billboard.prototype.update = function () {
         };
@@ -584,6 +605,9 @@ var Sumatra;
             if (isAnimate)
                 this.enlarge();
         };
+        Billboard.prototype.setHiScoreValue = function (newValue) {
+            this.txtHiScoreValue.setText(newValue.toString());
+        };
         return Billboard;
     }(Phaser.Sprite));
     Sumatra.Billboard = Billboard;
@@ -599,14 +623,15 @@ var Sumatra;
     var Cannon = (function (_super) {
         __extends(Cannon, _super);
         function Cannon(game, x, y) {
-            _super.call(this, game, x, y, 'imgCannon');
-            this.timeToGoUp = 1000;
-            this.anchor.setTo(0.5);
-            game.add.existing(this);
-            this.cannonState = CannonStateEnum.Idle;
-            this.posInitialX = x;
-            this.posInitialY = y;
-            this.isHitOnGround = false;
+            var _this = _super.call(this, game, x, y, 'imgCannon') || this;
+            _this.timeToGoUp = 1000;
+            _this.anchor.setTo(0.5);
+            game.add.existing(_this);
+            _this.cannonState = CannonStateEnum.Idle;
+            _this.posInitialX = x;
+            _this.posInitialY = y;
+            _this.isHitOnGround = false;
+            return _this;
         }
         Cannon.prototype.update = function () {
             //this.posInitial = new Phaser.Point(0, 0);
@@ -686,34 +711,36 @@ var Sumatra;
     var Cloud = (function (_super) {
         __extends(Cloud, _super);
         function Cloud(game) {
+            var _this = this;
             var strCloudImageName = '';
             if (game.rnd.sign() == -1)
                 strCloudImageName = 'imgCloudSmall';
             else
                 strCloudImageName = 'imgCloudLarge';
-            _super.call(this, game, 0, 0, strCloudImageName);
+            _this = _super.call(this, game, 0, 0, strCloudImageName) || this;
             if (game.rnd.sign() == -1) {
-                this.leftOrRight = LeftOrRightEnum.Left;
-                this.velocity = game.rnd.between(0, 5);
+                _this.leftOrRight = LeftOrRightEnum.Left;
+                _this.velocity = game.rnd.between(0, 5);
             }
             else {
-                this.leftOrRight = LeftOrRightEnum.Right;
-                this.velocity = -game.rnd.between(0, 5);
+                _this.leftOrRight = LeftOrRightEnum.Right;
+                _this.velocity = -game.rnd.between(0, 5);
             }
-            this.x = game.rnd.between(0, game.width);
-            this.y = game.rnd.between(0, game.height / 2);
-            this.anchor.setTo(0.5);
-            this.alpha = 0.5 + game.rnd.realInRange(0, 0.1 * this.velocity);
+            _this.x = game.rnd.between(0, game.width);
+            _this.y = game.rnd.between(0, game.height / 2);
+            _this.anchor.setTo(0.5);
+            _this.alpha = 0.5 + game.rnd.realInRange(0, 0.1 * _this.velocity);
             if (game.rnd.sign() == -1)
-                this.scale.x = -1;
+                _this.scale.x = -1;
             else
-                this.scale.x = 1;
-            game.add.existing(this);
+                _this.scale.x = 1;
+            game.add.existing(_this);
             // Physics
-            game.physics.enable(this);
-            this.body.collideWorldBounds = false;
-            this.body.setCircle(20);
-            this.body.velocity.x = this.velocity;
+            game.physics.enable(_this);
+            _this.body.collideWorldBounds = false;
+            _this.body.setCircle(20);
+            _this.body.velocity.x = _this.velocity;
+            return _this;
             //this.footerText = this.game.add.text(0, 100, this.leftOrRight.toString(), { font: "12px Arial", fill: "#FFFFFF", align: "center" });
         }
         Cloud.prototype.update = function () {
@@ -733,17 +760,18 @@ var Sumatra;
     var Fireball = (function (_super) {
         __extends(Fireball, _super);
         function Fireball(game, x, y) {
-            _super.call(this, game, x, y, 'FireballSprite', 1);
-            this.timeToGoUp = 1500;
-            this.deltaXX = 0;
-            this.animations.add('fireballAnimation', null, 10, true);
-            this.anchor.setTo(0.5, 0.75);
-            game.add.existing(this);
-            this.phase = PhaseEnum.Idle;
-            this.posInitialX = x;
-            this.posInitialY = y;
-            this.isHitOnGround = false;
-            this.hideMe();
+            var _this = _super.call(this, game, x, y, 'FireballSprite', 1) || this;
+            _this.timeToGoUp = 1500;
+            _this.deltaXX = 0;
+            _this.animations.add('fireballAnimation', null, 10, true);
+            _this.anchor.setTo(0.5, 0.75);
+            game.add.existing(_this);
+            _this.phase = PhaseEnum.Idle;
+            _this.posInitialX = x;
+            _this.posInitialY = y;
+            _this.isHitOnGround = false;
+            _this.hideMe();
+            return _this;
         }
         Fireball.prototype.update = function () {
         };
@@ -794,12 +822,12 @@ var Sumatra;
             if (this.durationForNewFireball - this.deltaDurationForNewFireball > this.minDurationForNewFireball)
                 this.durationForNewFireball -= this.deltaDurationForNewFireball;
         };
-        Fireball.maxFireballs = 10;
-        Fireball.durationForNewFireball = 2500;
-        Fireball.deltaDurationForNewFireball = 40;
-        Fireball.minDurationForNewFireball = 750;
         return Fireball;
     }(Phaser.Sprite));
+    Fireball.maxFireballs = 10;
+    Fireball.durationForNewFireball = 2500;
+    Fireball.deltaDurationForNewFireball = 40;
+    Fireball.minDurationForNewFireball = 750;
     Sumatra.Fireball = Fireball;
 })(Sumatra || (Sumatra = {}));
 var Sumatra;
@@ -807,10 +835,11 @@ var Sumatra;
     var GameOver = (function (_super) {
         __extends(GameOver, _super);
         function GameOver(game) {
-            _super.call(this, game, game.width / 2, game.height / 2, 'imgGameOver');
-            game.add.existing(this);
-            this.anchor.set(0.5);
-            this.visible = false;
+            var _this = _super.call(this, game, game.width / 2, game.height / 2, 'imgGameOver') || this;
+            game.add.existing(_this);
+            _this.anchor.set(0.5);
+            _this.visible = false;
+            return _this;
         }
         GameOver.prototype.update = function () {
         };
@@ -836,28 +865,29 @@ var Sumatra;
     var Jeep = (function (_super) {
         __extends(Jeep, _super);
         function Jeep(game, x, y) {
-            _super.call(this, game, x, y, 'imgJeep');
-            this.durationEngineUp = 250;
-            this.durationEngineDown = 1250;
-            game.add.existing(this);
-            this.anchor.set(0.5, 1);
-            this.driver = new Phaser.Sprite(game, -20, -110, "imgDriver");
-            this.driver.anchor.setTo(0.5, 1);
-            this.addChild(this.driver);
-            this.explosion = new Phaser.Sprite(game, 0, 0, "JeepExplosion", 1);
-            this.explosion.animations.add('jeepExplosionAnimation', null, 5, false);
-            this.explosion.anchor.setTo(0.5, 1);
-            this.explosion.visible = false;
-            this.explosion.scale.setTo(1.2);
-            this.addChild(this.explosion);
+            var _this = _super.call(this, game, x, y, 'imgJeep') || this;
+            _this.durationEngineUp = 250;
+            _this.durationEngineDown = 1250;
+            game.add.existing(_this);
+            _this.anchor.set(0.5, 1);
+            _this.driver = new Phaser.Sprite(game, -20, -110, "imgDriver");
+            _this.driver.anchor.setTo(0.5, 1);
+            _this.addChild(_this.driver);
+            _this.explosion = new Phaser.Sprite(game, 0, 0, "JeepExplosion", 1);
+            _this.explosion.animations.add('jeepExplosionAnimation', null, 5, false);
+            _this.explosion.anchor.setTo(0.5, 1);
+            _this.explosion.visible = false;
+            _this.explosion.scale.setTo(1.2);
+            _this.addChild(_this.explosion);
             // Physics
-            game.physics.enable(this);
-            this.body.collideWorldBounds = false;
-            this.body.setCircle(20);
-            this.body.velocity.x = 0;
-            this.scale.x = 1;
-            this.motionState = MotionStateEnum.Idle;
-            this.engineMovementUp();
+            game.physics.enable(_this);
+            _this.body.collideWorldBounds = false;
+            _this.body.setCircle(20);
+            _this.body.velocity.x = 0;
+            _this.scale.x = 1;
+            _this.motionState = MotionStateEnum.Idle;
+            _this.engineMovementUp();
+            return _this;
         }
         Jeep.prototype.update = function () {
         };
@@ -940,30 +970,31 @@ var Sumatra;
     var JeepFoo = (function (_super) {
         __extends(JeepFoo, _super);
         function JeepFoo(game) {
-            _super.call(this, game, 0, 0, 'imgJeepFoo');
-            this.minVelocity = 50;
-            game.add.existing(this);
-            this.anchor.set(0.5, 1);
-            this.phase = PhaseEnum.Hidden;
+            var _this = _super.call(this, game, 0, 0, 'imgJeepFoo') || this;
+            _this.minVelocity = 50;
+            game.add.existing(_this);
+            _this.anchor.set(0.5, 1);
+            _this.phase = PhaseEnum.Hidden;
             // Physics
-            game.physics.enable(this);
-            this.body.collideWorldBounds = false;
-            this.body.setCircle(20);
-            this.body.velocity.x = 0;
-            this.scale.x = 1;
-            this.hunterSitting = new Phaser.Sprite(game, 5, -38, "imgHunterSitting", 1);
-            this.hunterSitting.anchor.setTo(0.5, 1);
-            this.hunterStanding = new Phaser.Sprite(game, 9, -41, "imgHunterStanding", 1);
-            this.hunterStanding.anchor.setTo(0.5, 1);
-            this.bang = new Phaser.Sprite(game, 30, -60, "imgBang", 1);
-            this.bang.anchor.setTo(0.5);
-            this.bang.visible = false;
-            this.addChild(this.hunterSitting);
-            this.addChild(this.hunterStanding);
-            this.addChild(this.bang);
-            this.children.reverse();
-            this.soundGunShot = this.game.add.audio('gunShot', 1, false);
-            this.soundGunLoad = this.game.add.audio('gunLoad', 1, false);
+            game.physics.enable(_this);
+            _this.body.collideWorldBounds = false;
+            _this.body.setCircle(20);
+            _this.body.velocity.x = 0;
+            _this.scale.x = 1;
+            _this.hunterSitting = new Phaser.Sprite(game, 5, -38, "imgHunterSitting", 1);
+            _this.hunterSitting.anchor.setTo(0.5, 1);
+            _this.hunterStanding = new Phaser.Sprite(game, 9, -41, "imgHunterStanding", 1);
+            _this.hunterStanding.anchor.setTo(0.5, 1);
+            _this.bang = new Phaser.Sprite(game, 30, -60, "imgBang", 1);
+            _this.bang.anchor.setTo(0.5);
+            _this.bang.visible = false;
+            _this.addChild(_this.hunterSitting);
+            _this.addChild(_this.hunterStanding);
+            _this.addChild(_this.bang);
+            _this.children.reverse();
+            _this.soundGunShot = _this.game.add.audio('gunShot', 1, false);
+            _this.soundGunLoad = _this.game.add.audio('gunLoad', 1, false);
+            return _this;
         }
         JeepFoo.prototype.update = function () {
             if (this.phase == PhaseEnum.Moving && Math.abs(this.body.velocity.x) < this.minVelocity) {
@@ -1059,23 +1090,24 @@ var Sumatra;
     var Rhino = (function (_super) {
         __extends(Rhino, _super);
         function Rhino(game, posInit) {
-            _super.call(this, game, posInit.x, posInit.y, 'RhinoSpriteSheet', 1);
-            this.normDurationForStopping = 2000;
-            this.normVelocity = 50;
-            this.animations.add('rhinoWalking', [4, 5, 6], 4, true);
-            this.animations.add('rhinoStopping', [0, 1, 2, 3], 4, true);
-            this.animations.add('rhinoDead', [7], 1, true);
-            game.add.existing(this);
-            this.anchor.set(0.5, 1);
-            this.visible = false; // when created it's not visible
+            var _this = _super.call(this, game, posInit.x, posInit.y, 'RhinoSpriteSheet', 1) || this;
+            _this.normDurationForStopping = 2000;
+            _this.normVelocity = 50;
+            _this.animations.add('rhinoWalking', [4, 5, 6], 4, true);
+            _this.animations.add('rhinoStopping', [0, 1, 2, 3], 4, true);
+            _this.animations.add('rhinoDead', [7], 1, true);
+            game.add.existing(_this);
+            _this.anchor.set(0.5, 1);
+            _this.visible = false; // when created it's not visible
             // Physics
-            game.physics.enable(this);
-            this.body.collideWorldBounds = false;
-            this.body.setCircle(20);
-            this.body.velocity.x = 0;
-            this.statusText = this.game.add.text(5, this.game.world.height / 2, "Rhino", { font: "12px Arial", fill: "#FFFFFF", align: "center" });
-            this.statusText.anchor.setTo(0, 0.5);
-            this.initRhino();
+            game.physics.enable(_this);
+            _this.body.collideWorldBounds = false;
+            _this.body.setCircle(20);
+            _this.body.velocity.x = 0;
+            _this.statusText = _this.game.add.text(5, _this.game.world.height / 2, "Rhino", { font: "12px Arial", fill: "#FFFFFF", align: "center" });
+            _this.statusText.anchor.setTo(0, 0.5);
+            _this.initRhino();
+            return _this;
         }
         Rhino.prototype.update = function () {
             this.statusText.setText("Rhino : " + this.movingToLeftOrRight.toString() + " LOC=" + Math.round(this.x) + "x" + Math.round(this.y));
@@ -1149,15 +1181,16 @@ var Sumatra;
     var Volcano = (function (_super) {
         __extends(Volcano, _super);
         function Volcano(game, x, y) {
-            _super.call(this, game, 0, 0);
-            game.add.existing(this);
-            this.volcanoCrest = new Phaser.Sprite(game, x, y, 'imgVolcanoCrest');
-            this.volcanoCrest.anchor.setTo(0.5, 1);
-            this.volcanoSmoke = new Phaser.Sprite(game, x, y - this.volcanoCrest.height, 'imgVolcanoSmoke');
-            this.volcanoSmoke.anchor.set(0, 1);
-            this.addChild(this.volcanoCrest);
-            this.addChild(this.volcanoSmoke);
-            this.smokeFadeOut();
+            var _this = _super.call(this, game, 0, 0) || this;
+            game.add.existing(_this);
+            _this.volcanoCrest = new Phaser.Sprite(game, x, y, 'imgVolcanoCrest');
+            _this.volcanoCrest.anchor.setTo(0.5, 1);
+            _this.volcanoSmoke = new Phaser.Sprite(game, x, y - _this.volcanoCrest.height, 'imgVolcanoSmoke');
+            _this.volcanoSmoke.anchor.set(0, 1);
+            _this.addChild(_this.volcanoCrest);
+            _this.addChild(_this.volcanoSmoke);
+            _this.smokeFadeOut();
+            return _this;
             //this.footerText = this.game.add.text(10, 500, "JeepText", { font: "12px Arial", fill: "#FFFFFF", align: "center" });
         }
         Volcano.prototype.update = function () {

@@ -32,6 +32,8 @@
         private point25: Phaser.Sprite;
 
         create() {
+            //window.localStorage.removeItem('hiScore');
+
             this.physics.startSystem(Phaser.Physics.ARCADE);
             this.gameState = GameStateEnum.Running;
 
@@ -197,7 +199,17 @@
         private addPoints(p: number) {
             if (this.gameState == GameStateEnum.Running) {
                 this.points += p;
-                this.billboardPoints.changeValue(this.points, true);                
+                this.billboardPoints.changeValue(this.points, true);
+
+                var strHiScore = window.localStorage.getItem('hiScore');
+                
+                var hiScore = 0;
+                if (strHiScore != null) {
+                    hiScore = parseInt(strHiScore);
+                }
+
+                if (this.points > hiScore)
+                    this.billboardPoints.setHiScoreValue(this.points);
             }
         }
 
