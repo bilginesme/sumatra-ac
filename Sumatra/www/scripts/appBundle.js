@@ -78,8 +78,8 @@ var Sumatra;
             return _this;
         }
         Action.prototype.create = function () {
+            //window.localStorage.removeItem('hiScore');
             var _this = this;
-            window.localStorage.removeItem('hiScore');
             this.physics.startSystem(Phaser.Physics.ARCADE);
             this.gameState = GameStateEnum.Running;
             this.add.image(0, 0, 'imgSky');
@@ -146,6 +146,13 @@ var Sumatra;
             setTimeout(function () { return _this.rhino.giveLife(); }, 1000);
             setTimeout(function () { return _this.createRandomFireball(); }, 5000);
             this.game.add.audio('intro', 0.95, false).play();
+            this.cursors = this.game.input.keyboard.createCursorKeys();
+            var keyLeft = this.game.input.keyboard.addKey(Phaser.KeyCode.LEFT);
+            keyLeft.onDown.add(function (key) { console.log("LEFT key pressed"); }, this);
+            var keyRight = this.game.input.keyboard.addKey(Phaser.KeyCode.RIGHT);
+            keyRight.onDown.add(function (key) { console.log("RIGHT key pressed"); }, this);
+            var keySpaceBar = this.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+            keySpaceBar.onDown.add(function (key) { this.onClickSpaceBar(); console.log("Space Bar pressed"); }, this);
         };
         Action.prototype.update = function () {
             if (this.game.input.activePointer.isDown) {
@@ -162,12 +169,29 @@ var Sumatra;
                     this.statusText1.setText(this.jeep.motionState.toString());
                 }
             }
+            if (this.cursors.left.isDown) {
+                if (this.jeep.isIdle()) {
+                    console.log("Left pressed");
+                    // this.jeep.startMotion(this.game.input.x);
+                    //this.statusText1.setText(this.jeep.motionState.toString() + " xPosStart = " + this.jeep.xMovementOffset);
+                }
+                if (this.jeep.isMoving()) {
+                    console.log("Moving left");
+                }
+            }
+            if (this.cursors.left.isUp || this.cursors.right.isUp) {
+                if (this.jeep.isMoving()) {
+                    //this.jeep.endMotion();
+                    //this.statusText1.setText(this.jeep.motionState.toString());
+                    //console.log("Motion over.");
+                }
+            }
             this.handleJeepMovement();
             this.checkJeepFooHit();
             this.checkJeepRhinoVicinity();
             this.checkWhetherRhinoShot();
             this.checkFireballHit();
-            this.statusText2.setText("Fireball Duration : " + Sumatra.Fireball.durationForNewFireball);
+            this.statusText2.setText("Fireball Durationnnn : " + Sumatra.Fireball.durationForNewFireball);
         };
         Action.prototype.onTap = function (pointer, doubleTap) {
             if (doubleTap) {
@@ -189,6 +213,14 @@ var Sumatra;
             //this.footerText.setText(x + "x" + y + ", " + isClick);
             if (this.cannon.isIdle())
                 this.cannon.setPosition(this.jeep.getCanonLocation());
+        };
+        Action.prototype.onClickSpaceBar = function () {
+            if (this.gameState == GameStateEnum.Running
+                && this.jeep.isInArea(this.game.input.x, this.game.input.y)
+                && !this.rhino.isDead()) {
+                if (this.cannon.startFiring())
+                    this.createBoomWithCannon(this.jeep.getCanonLocation().x, this.jeep.getCanonLocation().y);
+            }
         };
         Action.prototype.playTickSound = function () { this.add.audio('click', 1, false).play(); };
         Action.prototype.decreaseOneLife = function () {

@@ -31,6 +31,8 @@
         private point100: Phaser.Sprite;
         private point25: Phaser.Sprite;
 
+        cursors: Phaser.CursorKeys;
+
         create() {
             //window.localStorage.removeItem('hiScore');
 
@@ -127,7 +129,19 @@
             setTimeout(() => this.createRandomFireball(), 5000);
 
             this.game.add.audio('intro', 0.95, false).play()
+
+            this.cursors = this.game.input.keyboard.createCursorKeys();
+
+            var keyLeft = this.game.input.keyboard.addKey(Phaser.KeyCode.LEFT);
+            keyLeft.onDown.add(function (key) { console.log("LEFT key pressed"); }, this);
+
+            var keyRight = this.game.input.keyboard.addKey(Phaser.KeyCode.RIGHT);
+            keyRight.onDown.add(function (key) { console.log("RIGHT key pressed"); }, this);
+
+            var keySpaceBar = this.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+            keySpaceBar.onDown.add(function (key) { this.onClickSpaceBar(); console.log("Space Bar pressed"); }, this);
         }
+
         update() {
             if (this.game.input.activePointer.isDown) {
                 if (this.jeep.isInArea(this.game.input.x, this.game.input.y)) {
@@ -143,6 +157,32 @@
                     this.jeep.endMotion();
                     this.statusText1.setText(this.jeep.motionState.toString());
                 }
+            }
+
+
+            if (this.cursors.left.isDown) {
+                if (this.jeep.isIdle()) {
+                    console.log("Left pressed");
+
+                   // this.jeep.startMotion(this.game.input.x);
+                    //this.statusText1.setText(this.jeep.motionState.toString() + " xPosStart = " + this.jeep.xMovementOffset);
+                }
+
+                
+                if (this.jeep.isMoving()) {
+                    console.log("Moving left");
+                }
+
+            }
+
+            if (this.cursors.left.isUp || this.cursors.right.isUp) {
+
+                if (this.jeep.isMoving()) {
+                    //this.jeep.endMotion();
+                    //this.statusText1.setText(this.jeep.motionState.toString());
+                    //console.log("Motion over.");
+                }
+                
             }
 
             this.handleJeepMovement();
@@ -175,6 +215,15 @@
             //this.footerText.setText(x + "x" + y + ", " + isClick);
             if (this.cannon.isIdle())
                 this.cannon.setPosition(this.jeep.getCanonLocation());
+        }
+        onClickSpaceBar() {
+            if (this.gameState == GameStateEnum.Running
+                && this.jeep.isInArea(this.game.input.x, this.game.input.y)
+                && !this.rhino.isDead())
+            {
+                if (this.cannon.startFiring())
+                    this.createBoomWithCannon(this.jeep.getCanonLocation().x, this.jeep.getCanonLocation().y);
+            }
         }
 
         private playTickSound() { this.add.audio('click', 1, false).play(); }
