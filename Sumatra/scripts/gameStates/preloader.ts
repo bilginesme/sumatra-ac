@@ -66,8 +66,8 @@
         }
 
         startMainMenu() {
-            //this.game.state.start('MainMenu', true, false);
-            this.game.state.start('Action', true, false);
+            this.game.state.start('MainMenu', true, false);
+            //this.game.state.start('Action', true, false);
         }
 
     }

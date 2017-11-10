@@ -1,6 +1,7 @@
 ﻿module Sumatra {
     enum GameStateEnum { NA = 0, Running = 1, LostOneLife = 2, GameOver = 9 }
-    
+    enum KeyboardDirectionEnum { None, Left, Right }
+
     export class Action extends Phaser.State {
         private background: Phaser.Sprite;
         private music: Phaser.Sound;
@@ -30,8 +31,7 @@
         private pointsForShootingStoppingJeep: number = 25;
         private point100: Phaser.Sprite;
         private point25: Phaser.Sprite;
-
-        cursors: Phaser.CursorKeys;
+        private keyboardDirection: KeyboardDirectionEnum;
 
         create() {
             //window.localStorage.removeItem('hiScore');
@@ -59,8 +59,6 @@
             this.boom = this.add.sprite(0, 0, 'imgBoom');
             this.boom.anchor.setTo(0.5);
             this.boom.visible = false;
-
-           
 
             this.explosion = this.add.sprite(0, 0, 'imgExplosion');
             this.explosion.anchor.setTo(0.5);
@@ -130,16 +128,28 @@
 
             this.game.add.audio('intro', 0.95, false).play()
 
-            this.cursors = this.game.input.keyboard.createCursorKeys();
+            this.keyboardDirection = KeyboardDirectionEnum.None;
 
             var keyLeft = this.game.input.keyboard.addKey(Phaser.KeyCode.LEFT);
-            keyLeft.onDown.add(function (key) { console.log("LEFT key pressed"); }, this);
+            keyLeft.onDown.add(function () {
+                if (this.keyboardDirection == KeyboardDirectionEnum.None) {
+                    this.keyboardDirection = KeyboardDirectionEnum.Left;
+                    this.onKeyDown(0, 0);
+                }
+            }, this);  
+            keyLeft.onUp.add(function () { this.onKeyUp(1); }, this);
 
             var keyRight = this.game.input.keyboard.addKey(Phaser.KeyCode.RIGHT);
-            keyRight.onDown.add(function (key) { console.log("RIGHT key pressed"); }, this);
+            keyRight.onDown.add(function () {
+                if (this.keyboardDirection == KeyboardDirectionEnum.None) {
+                    this.keyboardDirection = KeyboardDirectionEnum.Right;
+                    this.onKeyDown(0, 0);
+                }
+            }, this);
+            keyRight.onUp.add(function () { this.onKeyUp(2); }, this);
 
             var keySpaceBar = this.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
-            keySpaceBar.onDown.add(function (key) { this.onClickSpaceBar(); console.log("Space Bar pressed"); }, this);
+            keySpaceBar.onDown.add(function (key) { this.onClickSpaceBar(); }, this);
         }
 
         update() {
@@ -153,36 +163,15 @@
             }
 
             if (this.game.input.activePointer.isUp) {
-                if (this.jeep.isMoving()) {
+                if (this.jeep.isMoving() && this.keyboardDirection == KeyboardDirectionEnum.None) {
                     this.jeep.endMotion();
                     this.statusText1.setText(this.jeep.motionState.toString());
                 }
             }
 
-
-            if (this.cursors.left.isDown) {
-                if (this.jeep.isIdle()) {
-                    console.log("Left pressed");
-
-                   // this.jeep.startMotion(this.game.input.x);
-                    //this.statusText1.setText(this.jeep.motionState.toString() + " xPosStart = " + this.jeep.xMovementOffset);
-                }
-
-                
-                if (this.jeep.isMoving()) {
-                    console.log("Moving left");
-                }
-
-            }
-
-            if (this.cursors.left.isUp || this.cursors.right.isUp) {
-
-                if (this.jeep.isMoving()) {
-                    //this.jeep.endMotion();
-                    //this.statusText1.setText(this.jeep.motionState.toString());
-                    //console.log("Motion over.");
-                }
-                
+            if (this.keyboardDirection != KeyboardDirectionEnum.None) {
+                if (this.cannon.isIdle())
+                    this.cannon.setPosition(this.jeep.getCanonLocation());
             }
 
             this.handleJeepMovement();
@@ -192,7 +181,8 @@
             this.checkFireballHit();
             this.statusText2.setText("Fireball Duration : " + Fireball.durationForNewFireball);
         }
-        onTap(pointer, doubleTap) {
+
+        private onTap(pointer, doubleTap) {
             if (doubleTap) {
                 this.statusText1.setText("double");
             }
@@ -211,18 +201,26 @@
                     this.playTickSound();
             }
         }
-        onMove(pointer, x, y, isClick) {
-            //this.footerText.setText(x + "x" + y + ", " + isClick);
+        private onMove(pointer, x, y, isClick) {
             if (this.cannon.isIdle())
                 this.cannon.setPosition(this.jeep.getCanonLocation());
         }
-        onClickSpaceBar() {
-            if (this.gameState == GameStateEnum.Running
-                && this.jeep.isInArea(this.game.input.x, this.game.input.y)
-                && !this.rhino.isDead())
+        private onClickSpaceBar() {
+            if (this.gameState == GameStateEnum.Running && !this.rhino.isDead())
             {
                 if (this.cannon.startFiring())
                     this.createBoomWithCannon(this.jeep.getCanonLocation().x, this.jeep.getCanonLocation().y);
+            }
+        }
+        private onKeyDown(direction, notUsed) {
+            this.jeep.startMotion(this.jeep.x);
+            this.statusText1.setText(this.jeep.motionState.toString());
+        }
+        private onKeyUp(leftOrRight) {
+            if ((leftOrRight == 1 && this.keyboardDirection == KeyboardDirectionEnum.Left) || (leftOrRight == 2 && this.keyboardDirection == KeyboardDirectionEnum.Right)) {
+                this.keyboardDirection = KeyboardDirectionEnum.None;
+                this.jeep.endMotion();
+                this.statusText1.setText(this.jeep.motionState.toString());
             }
         }
 
@@ -271,10 +269,22 @@
 
         private handleJeepMovement() {
             if (this.gameState == GameStateEnum.Running && this.jeep.isMoving()) {
-                this.jeep.x = this.game.input.x - this.jeep.xMovementOffset;
+                if (this.keyboardDirection != KeyboardDirectionEnum.None) {
+                    if (this.keyboardDirection == KeyboardDirectionEnum.Left) {
+                        if (this.jeep.x > 0)
+                            this.jeep.x = this.jeep.x - 10;
+                    }
+                    else if (this.keyboardDirection == KeyboardDirectionEnum.Right) {
+                        if (this.jeep.x < this.game.width)
+                            this.jeep.x = this.jeep.x + 10;
+                    }
+                }
+                else {
+                    this.jeep.x = this.game.input.x - this.jeep.xMovementOffset;
+                }
+                
                 this.cleanAllFooElements();
                 this.jeep.xPrevious = this.jeep.x;
-                this.statusText1.setText("Moving " + this.jeep.xPrevious);
             }
         }
         private handleGameOver() {
