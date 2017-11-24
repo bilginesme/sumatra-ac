@@ -17,9 +17,21 @@
             this.game.debug.text("Click the logo to start the game", this.world.centerX, this.world.height - 20, "red");
 
             this.input.onDown.addOnce(this.fadeOut, this);
+            
+            /*
+            this.game.input.keyboard.onDownCallback = function (this, e)
+            {
+                console.log(e.keyCode);
+                this.fadeOut();
+            }
+            */
+
+            var keySpace = this.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+            keySpace.onDown.add(function () { this.fadeOut(); }, this);
         }
 
         fadeOut() {
+            console.log("Starting game...");
             this.add.audio('click', 1, false).play();
             
             this.add.tween(this.background).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);

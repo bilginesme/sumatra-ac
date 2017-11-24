@@ -93,7 +93,7 @@ var Sumatra;
             for (var i = 0; i < this.clouds.length; i++)
                 this.clouds[i] = new Sumatra.Cloud(this.game);
             this.volcano = new Sumatra.Volcano(this.game, this.game.width / 2, 418);
-            this.add.image(0, 332, 'imgBushes');
+            this.add.image(0, 315, 'imgBushes');
             this.add.image(0, 412, 'imgGround3');
             this.jeepsFoo = new Array(this.maxJeepsFoo);
             for (var i = 0; i < this.jeepsFoo.length; i++) {
@@ -533,8 +533,20 @@ var Sumatra;
             this.add.tween(this.logo).to({ y: 220 }, 1000, Phaser.Easing.Elastic.Out, true, 500);
             this.game.debug.text("Click the logo to start the game", this.world.centerX, this.world.height - 20, "red");
             this.input.onDown.addOnce(this.fadeOut, this);
+            /*
+            this.game.input.keyboard.onDownCallback = function (this, e)
+            {
+                console.log(e.keyCode);
+                this.fadeOut();
+            }
+            */
+            var keyLeft = this.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+            keyLeft.onDown.add(function () {
+                this.fadeOut();
+            }, this);
         };
         MainMenu.prototype.fadeOut = function () {
+            console.log("Starting game...");
             this.add.audio('click', 1, false).play();
             this.add.tween(this.background).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
             var tween = this.add.tween(this.logo).to({ y: 800 }, 1000, Phaser.Easing.Linear.None, true);

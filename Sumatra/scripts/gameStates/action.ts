@@ -47,7 +47,7 @@
             
             this.volcano = new Volcano(this.game, this.game.width / 2, 418);
 
-            this.add.image(0, 332, 'imgBushes');
+            this.add.image(0, 315, 'imgBushes');
             this.add.image(0, 412, 'imgGround3');
 
             this.jeepsFoo = new Array(this.maxJeepsFoo);
@@ -115,7 +115,6 @@
             this.point25.anchor.setTo(0.5);
             this.point25.visible = false;
 
-
             this.gameOver = new GameOver(this.game);
             this.gameOver.anchor.setTo(0.5);
 
@@ -140,8 +139,7 @@
             keyLeft.onUp.add(function () { this.onKeyUp(1); }, this);
 
             var keyRight = this.game.input.keyboard.addKey(Phaser.KeyCode.RIGHT);
-            keyRight.onDown.add(function () {
-                if (this.keyboardDirection == KeyboardDirectionEnum.None) {
+            keyRight.onDown.add(function () { if (this.keyboardDirection == KeyboardDirectionEnum.None) {
                     this.keyboardDirection = KeyboardDirectionEnum.Right;
                     this.onKeyDown(0, 0);
                 }
