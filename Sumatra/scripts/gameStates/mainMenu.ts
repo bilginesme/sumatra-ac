@@ -28,6 +28,9 @@
 
             var keySpace = this.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
             keySpace.onDown.add(function () { this.fadeOut(); }, this);
+
+            var keySpace = this.game.input.keyboard.addKey(Phaser.KeyCode.ENTER);
+            keySpace.onDown.add(function () { this.fadeOut(); }, this);
         }
 
         fadeOut() {

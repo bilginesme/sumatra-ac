@@ -106,9 +106,9 @@ var Sumatra;
             this.explosion = this.add.sprite(0, 0, 'imgExplosion');
             this.explosion.anchor.setTo(0.5);
             this.explosion.visible = false;
-            this.add.image(0, 462, 'imgGround2');
-            this.add.image(0, 517, 'imgGround0');
-            this.add.image(0, 480, 'imgGround1');
+            this.add.image(0, 480, 'imgGround2');
+            this.add.image(0, 520, 'imgGround1');
+            this.add.image(0, 566, 'imgGround0');
             this.rhino = new Sumatra.Rhino(this.game, new Phaser.Point(0, 0));
             this.jeep = new Sumatra.Jeep(this.game, 930, 630);
             this.cannon = new Sumatra.Cannon(this.game, this.jeep.getCanonLocation().x, this.jeep.getCanonLocation().y);
@@ -540,10 +540,10 @@ var Sumatra;
                 this.fadeOut();
             }
             */
-            var keyLeft = this.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
-            keyLeft.onDown.add(function () {
-                this.fadeOut();
-            }, this);
+            var keySpace = this.game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+            keySpace.onDown.add(function () { this.fadeOut(); }, this);
+            var keySpace = this.game.input.keyboard.addKey(Phaser.KeyCode.ENTER);
+            keySpace.onDown.add(function () { this.fadeOut(); }, this);
         };
         MainMenu.prototype.fadeOut = function () {
             console.log("Starting game...");

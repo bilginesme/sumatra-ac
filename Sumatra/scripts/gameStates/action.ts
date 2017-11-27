@@ -64,10 +64,10 @@
             this.explosion.anchor.setTo(0.5);
             this.explosion.visible = false;
 
-            this.add.image(0, 462, 'imgGround2');
-            this.add.image(0, 517, 'imgGround0');
-            this.add.image(0, 480, 'imgGround1');
-            
+            this.add.image(0, 480, 'imgGround2');
+            this.add.image(0, 520, 'imgGround1');
+            this.add.image(0, 566, 'imgGround0');
+
             this.rhino = new Rhino(this.game, new Phaser.Point(0, 0));
             this.jeep = new Jeep(this.game, 930, 630);
             this.cannon = new Cannon(this.game, this.jeep.getCanonLocation().x, this.jeep.getCanonLocation().y);
